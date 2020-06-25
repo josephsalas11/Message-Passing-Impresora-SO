@@ -6,6 +6,7 @@
 package View;
 
 import static View.WordUI.fileText;
+import Model.*;
 
 /**
  *
@@ -14,6 +15,7 @@ import static View.WordUI.fileText;
 public class WordUI extends javax.swing.JFrame {
 
     public static String fileText;
+    private String printFile;
     /**
      * Creates new form WordUI
      */
@@ -30,13 +32,18 @@ public class WordUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        printButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         fileArea = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jButton1.setText("Imprimir");
+        printButton.setText("Imprimir");
+        printButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printButtonActionPerformed(evt);
+            }
+        });
 
         fileArea.setColumns(20);
         fileArea.setRows(5);
@@ -49,7 +56,7 @@ public class WordUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(printButton)
                 .addGap(26, 26, 26))
             .addGroup(layout.createSequentialGroup()
                 .addGap(34, 34, 34)
@@ -62,12 +69,16 @@ public class WordUI extends javax.swing.JFrame {
                 .addGap(37, 37, 37)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1)
+                .addComponent(printButton)
                 .addGap(25, 25, 25))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
+        printFile = fileArea.getText();
+    }//GEN-LAST:event_printButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -107,7 +118,7 @@ public class WordUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea fileArea;
-    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton printButton;
     // End of variables declaration//GEN-END:variables
 }
