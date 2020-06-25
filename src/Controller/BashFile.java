@@ -20,6 +20,7 @@ public class BashFile {
     
     public BashFile() {
         commands = new ArrayList<String>();
+        
     }
     
     public ArrayList<String> getCommands(File bashFile) throws FileNotFoundException
@@ -33,6 +34,18 @@ public class BashFile {
         return commands;
     }
     
-    
+  
+    public String getFileText(File bashFile) throws FileNotFoundException
+    {
+        String fileText = "";
+        
+        Scanner fileReader = new Scanner(bashFile);
+        while (fileReader.hasNextLine()) {
+        fileText += fileReader.nextLine();
+        fileText +="\n";      
+        }
+        System.out.println(fileText);
+        return fileText;
+    }
     
 }
