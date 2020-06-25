@@ -533,6 +533,7 @@ public class MainPage extends javax.swing.JFrame {
            direc_indirecCombo.disable();
            direc_receiveCombo.enable();
        }
+       //Prueba 
        
     }//GEN-LAST:event_direc_direcRadioActionPerformed
 
