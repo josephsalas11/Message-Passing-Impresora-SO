@@ -36,7 +36,7 @@ public class WordUI extends javax.swing.JFrame {
     public WordUI() {
         initComponents();
         ps = fm.createImplicitProcess(processCounter, SynchronizationType.NONBLOCKING, QueueType.FIFO, 10, SynchronizationType.NONBLOCKING);
-        printButton.setVisible(false);
+        //printButton.setVisible(false);
     }
 
     /**
@@ -138,12 +138,17 @@ public class WordUI extends javax.swing.JFrame {
     private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
 
         printFile = fileArea.getText();
-        try {
-            fm.sendIndirectProcess(ps.getId(), 1, MessageType.FIXED, 100, sourcePath, -1);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(WordUI.class.getName()).log(Level.SEVERE, null, ex);
+        if(sourcePath == null){
+            JOptionPane.showMessageDialog(null, "Guarda el archivo a una carpeta destino para imprimir"
+                    , "Información - Imprimir archivo", JOptionPane.WARNING_MESSAGE);
         }
-        
+        else{
+           try {
+                fm.sendIndirectProcess(ps.getId(), 1, MessageType.FIXED, 100, sourcePath, -1);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(WordUI.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+        }  
         
     }//GEN-LAST:event_printButtonActionPerformed
 
