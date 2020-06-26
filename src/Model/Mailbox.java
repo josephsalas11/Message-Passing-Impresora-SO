@@ -56,7 +56,7 @@ public class Mailbox implements IProducer{
                 
                 if(receiver != null && receiver.getSynchronizationType() == SynchronizationType.BLOCKING){
                     receiver.receiveMessage();
-                    System.out.println("asd");
+                    //System.out.println("asd");
                 }
             }
         }
@@ -65,7 +65,6 @@ public class Mailbox implements IProducer{
     @Override
     public Message getMessage(IReceiver receiver) throws InterruptedException {
         //aqui habria que poner el sendMessage del producer correspondiente
-        
         if(isReceiverAllowed(receiver)){
             Message message = messageQueue.getMessage();
             lastMessageCounter++;
@@ -125,6 +124,10 @@ public class Mailbox implements IProducer{
 
     public int getId() {
         return id;
+    }
+
+    public ArrayList<IReceiver> getReceivers() {
+        return receivers;
     }
     
     

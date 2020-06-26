@@ -27,7 +27,8 @@ public class WordUI extends javax.swing.JFrame {
      */
     public WordUI() {
         initComponents();
-       ps = fm.createImplicitProcess(processCounter, SynchronizationType.NONBLOCKING, QueueType.FIFO, 10, SynchronizationType.NONBLOCKING);
+        ps = fm.createImplicitProcess(processCounter, SynchronizationType.NONBLOCKING, QueueType.FIFO, 10, SynchronizationType.NONBLOCKING);
+        fm.addReceiverMailbox(1, ps.getId());
     }
 
     /**
