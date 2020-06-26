@@ -5,8 +5,11 @@
  */
 package View;
 
+import Controller.FunctionManager;
 import static View.WordUI.fileText;
 import Model.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -16,11 +19,15 @@ public class WordUI extends javax.swing.JFrame {
 
     public static String fileText;
     private String printFile;
+    private FunctionManager fm = FunctionManager.getInstance();
+    private Model.Process ps;
+    public static int processCounter;
     /**
      * Creates new form WordUI
      */
     public WordUI() {
         initComponents();
+       ps = fm.createImplicitProcess(processCounter, SynchronizationType.NONBLOCKING, QueueType.FIFO, 10, SynchronizationType.NONBLOCKING);
     }
 
     /**
@@ -77,7 +84,14 @@ public class WordUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
+        //Esta variable almacena el texto que se va a mandar a imprimir (en este caso el mensaje)
         printFile = fileArea.getText();
+        try {
+            fm.sendIndirectProcess(ps.getId(), 1, MessageType.FIXED, 100, printFile, -1);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(WordUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }//GEN-LAST:event_printButtonActionPerformed
 
     /**
@@ -107,6 +121,7 @@ public class WordUI extends javax.swing.JFrame {
         }
         //</editor-fold>
         fileText = args[0];
+        processCounter = Integer.parseInt(args[1]);
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             

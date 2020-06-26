@@ -5,7 +5,9 @@
  */
 package Model;
 
-import Model.Command.CommandTokenizer;
+import Controller.FunctionManager;
+
+
 
 /**
  *
@@ -77,6 +79,7 @@ public class Process {
         //LOG
         Log.getInstance().addLog(id, "El proceso "+message.getSourceID()+" ha enviado el comando para enviar un mensaje al proceso "+message.getDestinyID()+ " a través del mailbox "+mailbox.getId());
         //mailbox.putMessage();
+        System.out.println("Entro al send Mailbox");
     }
     
     public void receive(Process source){
@@ -87,7 +90,7 @@ public class Process {
         }
         else{
            //recibir mensaje
-           if(CommandTokenizer.getInstance().indirect == false)
+           if(FunctionManager.getInstance().indirect == false)
            {
                receiver.setProducer(source.getProducer());
            }

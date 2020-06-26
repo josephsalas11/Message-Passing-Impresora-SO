@@ -10,7 +10,6 @@ import Model.SynchronizationType;
 import Model.Process;
 import static java.lang.Thread.sleep;
 import java.util.*; 
-import Model.Command.*;
 import Model.IProducer;
 
 
@@ -19,13 +18,23 @@ public class FunctionManager {
 
     Hashtable<Integer, Process> processList;
     Hashtable<Integer, Mailbox> mailboxList;
+    static FunctionManager singleton = null;
+    public boolean indirect = true;
     
-    public FunctionManager() {
+    private FunctionManager() {
         processList = new Hashtable<Integer, Process>();
         mailboxList = new Hashtable<Integer, Mailbox>();
 
     }
     
+    public static FunctionManager getInstance()
+    {
+        if(singleton == null)
+        {
+            singleton = new FunctionManager();
+        }
+        return singleton;
+    }
     
     public void createExplicitProcess(int processCounter,SynchronizationType STP,QueueType queueType, int queueSizeType, SynchronizationType STR, int ID_SP)
     {
@@ -35,10 +44,11 @@ public class FunctionManager {
 
     }
     
-    public void createImplicitProcess(int processCounter,SynchronizationType STP,QueueType queueType, int queueSizeType, SynchronizationType STR)
+    public Model.Process createImplicitProcess(int processCounter,SynchronizationType STP,QueueType queueType, int queueSizeType, SynchronizationType STR)
     {
-         processList.put(processCounter, new Process(processCounter, STP,
-                queueType, queueSizeType,STR));
+        Process psTemp = new Process(processCounter, STP,queueType, queueSizeType,STR);
+         processList.put(processCounter, psTemp);
+         return psTemp;
     }
     
     public void createIndirectProcess(int processCounter,SynchronizationType STP,QueueType queueType, int queueSizeType, SynchronizationType STR, int ID_MB)

@@ -6,6 +6,9 @@
 package View;
 
 import Controller.BashFile;
+import Controller.FunctionManager;
+import Model.QueueType;
+import Model.SynchronizationType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.logging.Level;
@@ -20,13 +23,18 @@ public class MainPrinter extends javax.swing.JFrame {
 
     
     private File file;
-    private WordUI word;
+    private FunctionManager functionManager = FunctionManager.getInstance();
+    private String[] str;
+    private int windowCounter = 0;
     /**
      * Creates new form MainPaint
      */
     public MainPrinter() {
         initComponents();
         logArea.setEditable(false);
+        functionManager.createMailbox(1, 50, QueueType.FIFO);
+        functionManager.createIndirectProcess(1, SynchronizationType.BLOCKING, QueueType.FIFO, 10, SynchronizationType.BLOCKING, 1);
+        str = new String[2]; 
     }
 
     /**
@@ -38,8 +46,8 @@ public class MainPrinter extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        openFileBtn = new javax.swing.JButton();
+        newFileBtn = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         logArea = new javax.swing.JTextArea();
@@ -47,17 +55,17 @@ public class MainPrinter extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Abrir Archivo");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        openFileBtn.setText("Abrir Archivo");
+        openFileBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                openFileBtnActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Nuevo Archivo");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        newFileBtn.setText("Nuevo Archivo");
+        newFileBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                newFileBtnActionPerformed(evt);
             }
         });
 
@@ -76,9 +84,9 @@ public class MainPrinter extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
+                .addComponent(openFileBtn)
                 .addGap(117, 117, 117)
-                .addComponent(jButton2)
+                .addComponent(newFileBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton3)
                 .addGap(38, 38, 38))
@@ -98,8 +106,8 @@ public class MainPrinter extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
+                    .addComponent(openFileBtn)
+                    .addComponent(newFileBtn)
                     .addComponent(jButton3))
                 .addGap(25, 25, 25))
         );
@@ -107,7 +115,9 @@ public class MainPrinter extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void openFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileBtnActionPerformed
+
+        windowCounter +=1;
         String fileText = "";
         BashFile bashFile = new BashFile();
         JFileChooser openFile = new JFileChooser();
@@ -119,18 +129,22 @@ public class MainPrinter extends javax.swing.JFrame {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainPrinter.class.getName()).log(Level.SEVERE, null, ex);
         }
-        String[] str = new String[1];
         str[0] = fileText;
-        word.main(str);
-        word.setVisible(true);
+        str[1] = Integer.toString(windowCounter);
+        WordUI.main(str);
         
         
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_openFileBtnActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        WordUI word = new WordUI();
-        word.setVisible(true);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void newFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileBtnActionPerformed
+
+        windowCounter +=1;
+        str[0] = "";
+        str[1] = Integer.toString(windowCounter);
+        WordUI.main(str);
+   
+        
+    }//GEN-LAST:event_newFileBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -169,11 +183,11 @@ public class MainPrinter extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea logArea;
+    private javax.swing.JButton newFileBtn;
+    private javax.swing.JButton openFileBtn;
     // End of variables declaration//GEN-END:variables
 }

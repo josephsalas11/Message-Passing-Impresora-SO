@@ -1,7 +1,7 @@
 package View;
 
 import Controller.FunctionManager;
-import Model.Command.SendMessageCommand;
+
 import Model.Mailbox;
 import Model.Message;
 import Model.MessageType;
@@ -73,7 +73,7 @@ public class test{
             sleep(3000);
             System.out.println(mailbox.getMessageQueue().getQueueSize());            
 
-            FunctionManager functionManager = new FunctionManager();
+            FunctionManager functionManager = FunctionManager.getInstance();
             /*En la impresora debe existir un mailbox, el cual va a recibir todas las peticiones de impresión*/
             functionManager.createMailbox(1, 50, QueueType.FIFO);
             /*La impresora va a tener un proceso blocking, para que imprima uno por uno*/
@@ -88,12 +88,3 @@ public class test{
         }
         
 }
-
-            //Producer p = new Producer(5, SynchronizationType.NONBLOCKING, QueueType.FIFO);
-            //p.getMessageQueue().addMessage(m1);
-            //p.getMessageQueue().addMessage(m2);
-            //p.getMessageQueue().addMessage(m3);
-
-            //p.start();
-            //Receiver r = new Receiver(p, SynchronizationType.NONBLOCKING);
-            //r.start();
