@@ -11,6 +11,7 @@ import Model.Process;
 import static java.lang.Thread.sleep;
 import java.util.*; 
 import Model.IProducer;
+import java.io.File;
 
 
 
@@ -20,10 +21,14 @@ public class FunctionManager {
     Hashtable<Integer, Mailbox> mailboxList;
     static FunctionManager singleton = null;
     public boolean indirect = true;
+    public String destinyPath ;
     
     private FunctionManager() {
         processList = new Hashtable<Integer, Process>();
         mailboxList = new Hashtable<Integer, Mailbox>();
+        String filePath = new File("").getAbsolutePath();
+        filePath =  filePath.concat("\\Impresos");
+        destinyPath = filePath;
 
     }
     

@@ -29,12 +29,14 @@ public class WordUI extends javax.swing.JFrame {
     private FunctionManager fm = FunctionManager.getInstance();
     private Model.Process ps;
     public static int processCounter;
+    public static String sourcePath;
     /**
      * Creates new form WordUI
      */
     public WordUI() {
         initComponents();
         ps = fm.createImplicitProcess(processCounter, SynchronizationType.NONBLOCKING, QueueType.FIFO, 10, SynchronizationType.NONBLOCKING);
+        printButton.setVisible(false);
     }
 
     /**
@@ -49,7 +51,7 @@ public class WordUI extends javax.swing.JFrame {
         printButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         fileArea = new javax.swing.JTextArea();
-        printBtn = new javax.swing.JButton();
+        saveBtn = new javax.swing.JButton();
         printHelp = new javax.swing.JLabel();
         saveHelp = new javax.swing.JLabel();
 
@@ -67,15 +69,15 @@ public class WordUI extends javax.swing.JFrame {
         jScrollPane1.setViewportView(fileArea);
         fileArea.setText(fileText);
 
-        printBtn.setText("Guardar");
-        printBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+        saveBtn.setText("Guardar");
+        saveBtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                printBtnMouseClicked(evt);
+                saveBtnMouseClicked(evt);
             }
         });
-        printBtn.addActionListener(new java.awt.event.ActionListener() {
+        saveBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                printBtnActionPerformed(evt);
+                saveBtnActionPerformed(evt);
             }
         });
 
@@ -108,7 +110,7 @@ public class WordUI extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(39, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(printBtn)
+                        .addComponent(saveBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(saveHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -124,7 +126,7 @@ public class WordUI extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(printButton)
-                    .addComponent(printBtn)
+                    .addComponent(saveBtn)
                     .addComponent(printHelp)
                     .addComponent(saveHelp))
                 .addGap(25, 25, 25))
@@ -137,12 +139,10 @@ public class WordUI extends javax.swing.JFrame {
 
         printFile = fileArea.getText();
         try {
-            fm.sendIndirectProcess(ps.getId(), 1, MessageType.FIXED, 100, printFile, -1);
+            fm.sendIndirectProcess(ps.getId(), 1, MessageType.FIXED, 100, sourcePath, -1);
         } catch (InterruptedException ex) {
             Logger.getLogger(WordUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-
         
         
     }//GEN-LAST:event_printButtonActionPerformed
@@ -153,27 +153,32 @@ public class WordUI extends javax.swing.JFrame {
                     , "Información - Imprimir archivo", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_printHelpMouseClicked
 
-    private void printBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_printBtnMouseClicked
+    private void saveBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveBtnMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_printBtnMouseClicked
+    }//GEN-LAST:event_saveBtnMouseClicked
 
     private void saveHelpMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveHelpMouseClicked
                JOptionPane.showMessageDialog(null, "Salva el archivo a una carpeta destino"
                     , "Información - Guardar archivo", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_saveHelpMouseClicked
 
-    private void printBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printBtnActionPerformed
+    private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
     
         JFileChooser save = new JFileChooser();
         save.showSaveDialog(null);
         save.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         File file = save.getSelectedFile();
+        sourcePath = file.getAbsolutePath();
+        System.out.println(sourcePath);
         try {
             saveFile(fileArea.getText(), file);
         } catch (IOException ex) {
             Logger.getLogger(WordUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_printBtnActionPerformed
+        
+        printButton.setVisible(true);
+        printButton.update(this.getGraphics());
+    }//GEN-LAST:event_saveBtnActionPerformed
 
     
     public void saveFile(String message, File file) throws IOException
@@ -211,6 +216,7 @@ public class WordUI extends javax.swing.JFrame {
         //</editor-fold>
         fileText = args[0];
         processCounter = Integer.parseInt(args[1]);
+        sourcePath = args[2];
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             
@@ -223,9 +229,9 @@ public class WordUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea fileArea;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton printBtn;
     private javax.swing.JButton printButton;
     private javax.swing.JLabel printHelp;
+    private javax.swing.JButton saveBtn;
     private javax.swing.JLabel saveHelp;
     // End of variables declaration//GEN-END:variables
 }

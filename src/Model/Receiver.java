@@ -5,7 +5,15 @@
  */
 package Model;
 
+import Controller.FunctionManager;
+import java.io.IOException;
 import static java.lang.Thread.sleep;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -57,6 +65,12 @@ public class Receiver extends Thread implements IReceiver{
             else { //if(synchronizationType == SynchronizationType.NONBLOCKING)
                 System.out.println(message.getContent());
                 sleep(1000);
+            }
+            try {
+                Path moveFile = Files.move(Paths.get(message.getContent()),
+                        Paths.get(FunctionManager.getInstance().destinyPath.concat("\\Prueba1")), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ex) {
+                Logger.getLogger(Receiver.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }

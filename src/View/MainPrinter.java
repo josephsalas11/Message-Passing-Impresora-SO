@@ -32,6 +32,7 @@ public class MainPrinter extends javax.swing.JFrame {
     private String[] str;
     private int windowCounter = 1;
     private static MainPrinter singleton = null;
+    private String sourcePath;
     /**
      * Creates new form MainPaint
      */
@@ -40,7 +41,7 @@ public class MainPrinter extends javax.swing.JFrame {
         //logArea.setEditable(false);
         functionManager.createMailbox(1, 50, QueueType.FIFO);
         functionManager.createIndirectProcess(1, SynchronizationType.BLOCKING, QueueType.FIFO, 10, SynchronizationType.BLOCKING, 1);
-        str = new String[2]; 
+        str = new String[3]; 
         functionManager.addReceiverMailbox(1, 1);
     }
     
@@ -187,6 +188,7 @@ public class MainPrinter extends javax.swing.JFrame {
         openFile.showOpenDialog(null);
         openFile.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES); 
         file = openFile.getSelectedFile();
+        sourcePath = file.getAbsolutePath();
         try {
             fileText = bashFile.getFileText(file);
         } catch (FileNotFoundException ex) {
@@ -194,6 +196,7 @@ public class MainPrinter extends javax.swing.JFrame {
         }
         str[0] = fileText;
         str[1] = Integer.toString(windowCounter);
+        str[2] = sourcePath;
         WordUI.main(str);
         
         
