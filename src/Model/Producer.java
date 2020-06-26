@@ -13,6 +13,8 @@ public class Producer extends Thread implements IProducer{
     private IMessageQueue messageQueue;
     private SynchronizationType synchronizationType;
     private IReceiver receiver;
+    
+    private boolean running = true;
 
     public Producer(int queueSize, SynchronizationType synchronizationType, QueueType queueType) {
         if(queueType == QueueType.FIFO)
@@ -26,7 +28,7 @@ public class Producer extends Thread implements IProducer{
     @Override
     public void run(){
         try {
-            while(true){
+            while(running){
                 putMessage();
                 sleep(1000);
             }
@@ -118,6 +120,10 @@ public class Producer extends Thread implements IProducer{
         if(synchronizationType == SynchronizationType.BLOCKING){
             notify();
         }
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
     }
     
     

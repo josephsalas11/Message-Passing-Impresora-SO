@@ -26,6 +26,8 @@ public class Receiver extends Thread implements IReceiver{
     private SynchronizationType synchronizationType;
     private boolean allowReceive = true;
     private boolean waitReceive = true;
+    
+    private boolean running = true;
 
     public Receiver(IProducer producer, SynchronizationType synchronizationType, int processId) {
         this.processId = processId;
@@ -36,7 +38,7 @@ public class Receiver extends Thread implements IReceiver{
     @Override
     public void run(){
         try {
-            while(true){
+            while(running){
                 if(producer != null && allowReceive){
                     //System.out.println("asdasdasda");
                     if(producer.getMessageQueue().isQueueEmpty()){ //hacer validacion si se cumple condicion sleep(1)
@@ -129,6 +131,10 @@ public class Receiver extends Thread implements IReceiver{
         if(processId == r.processId)
             return true;
         return false;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
     }
     
     

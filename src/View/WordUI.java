@@ -57,6 +57,11 @@ public class WordUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Editor de Archivos");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         printButton.setText("Imprimir");
         printButton.addActionListener(new java.awt.event.ActionListener() {
@@ -186,6 +191,16 @@ public class WordUI extends javax.swing.JFrame {
         printButton.update(this.getGraphics());
     }//GEN-LAST:event_saveBtnActionPerformed
 
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        System.out.println("asdasdasdsa");
+        //parar el hilo del proceso
+        ps.getProducer().setRunning(false);
+        ps.getReceiver().setRunning(false);
+        //eliminar el proceso del function manager
+        fm.deleteProcess(ps.getId());
+        this.dispose();
+    }//GEN-LAST:event_formWindowClosed
+
     
     public void saveFile(String message, File file) throws IOException
     {
@@ -232,6 +247,7 @@ public class WordUI extends javax.swing.JFrame {
         });
     }
 
+            
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea fileArea;
     private javax.swing.JScrollPane jScrollPane1;

@@ -19,4 +19,6 @@ public interface IReceiver{
    void setWaitReceive(boolean waitReceive);
    void setProducer(IProducer producer);
    IProducer getProducer();
+
+    public void setRunning(boolean b);
 }

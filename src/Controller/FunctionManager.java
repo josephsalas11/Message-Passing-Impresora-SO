@@ -133,5 +133,9 @@ public void sendIndirectProcess(int idSourceProcess, int idDestinationProcess, M
         return mailboxList;
     }
     
+    public void deleteProcess(int idProcess){
+        processList.remove(idProcess);
+        System.out.println("Proceso "+idProcess+" eliminado exitosamente");
+    }
     
 }
