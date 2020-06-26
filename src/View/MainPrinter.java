@@ -25,7 +25,7 @@ public class MainPrinter extends javax.swing.JFrame {
     private File file;
     private FunctionManager functionManager = FunctionManager.getInstance();
     private String[] str;
-    private int windowCounter = 0;
+    private int windowCounter = 1;
     /**
      * Creates new form MainPaint
      */
