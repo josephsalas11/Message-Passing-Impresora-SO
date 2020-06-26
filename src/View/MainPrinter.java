@@ -35,6 +35,7 @@ public class MainPrinter extends javax.swing.JFrame {
         functionManager.createMailbox(1, 50, QueueType.FIFO);
         functionManager.createIndirectProcess(1, SynchronizationType.BLOCKING, QueueType.FIFO, 10, SynchronizationType.BLOCKING, 1);
         str = new String[2]; 
+        functionManager.addReceiverMailbox(1, 1);
     }
 
     /**
