@@ -1,5 +1,7 @@
 package View;
 
+import Controller.FunctionManager;
+import Model.Command.SendMessageCommand;
 import Model.Mailbox;
 import Model.Message;
 import Model.MessageType;
@@ -71,7 +73,18 @@ public class test{
             sleep(3000);
             System.out.println(mailbox.getMessageQueue().getQueueSize());            
 
-
+            FunctionManager functionManager = new FunctionManager();
+            /*En la impresora debe existir un mailbox, el cual va a recibir todas las peticiones de impresión*/
+            functionManager.createMailbox(1, 50, QueueType.FIFO);
+            /*La impresora va a tener un proceso blocking, para que imprima uno por uno*/
+            functionManager.createIndirectProcess(1, SynchronizationType.BLOCKING, QueueType.FIFO, 10, SynchronizationType.BLOCKING, 1);
+            
+            /*Por cada instancia de editor, se debe crear un proceso*/
+            functionManager.createImplicitProcess(2, SynchronizationType.NONBLOCKING, QueueType.FIFO, 10, SynchronizationType.NONBLOCKING);
+            
+            /*Cuando se mande a imprimir*/
+            //SendMessageCommand sendMessageCommand = new SendMessageCommand(2, 1, "Aquí va el mensaje");
+            functionManager.sendIndirectProcess(2, 1, MessageType.FIXED, 100, "Soy el mensaje", -1);
         }
         
 }

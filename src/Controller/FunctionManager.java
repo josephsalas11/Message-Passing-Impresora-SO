@@ -71,7 +71,7 @@ public void sendIndirectProcess(int idSourceProcess, int idDestinationProcess, M
 
         Message message = null;
         
-        if(priority != -1)
+        if(priority == -1)
             message = source.createMessage(destination, messageContent, messageType, messageLength);
         else
             message = source.createMessagePriority(destination, messageContent, messageType, messageLength, priority);
