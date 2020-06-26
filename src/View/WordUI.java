@@ -11,10 +11,12 @@ import Model.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -132,13 +134,16 @@ public class WordUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
-        //Esta variable almacena el texto que se va a mandar a imprimir (en este caso el mensaje)
+
         printFile = fileArea.getText();
         try {
             fm.sendIndirectProcess(ps.getId(), 1, MessageType.FIXED, 100, printFile, -1);
         } catch (InterruptedException ex) {
             Logger.getLogger(WordUI.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+
+        
         
     }//GEN-LAST:event_printButtonActionPerformed
 
