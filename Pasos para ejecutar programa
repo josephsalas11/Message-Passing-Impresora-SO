@@ -1,0 +1,16 @@
+Proyecto programado II de sistemas operativos (Proyecto Impresora)
+
+ - Pasos para ejecutar el proyecto programado:
+ 	+ Para correr el programa primero se debe ejecutar la clase MainPrinter (clase default del programa) la cual desplegra la ventana de inicio.
+
+ 	+ Una vez se inicie el programa desplegará una ventana con 3 opciones, "Abrir Archivo", "Cargar Archivo" y "Actualizar logs".
+
+ 	+ El botón de abrir archivo desplegará una ventana para poder abrir el archivo que se desee y aparecerá en un "editor" donde se podrá modificar, guardar y posteriormente mandar a imprimir. 
+
+ 	+ El botón de nuevo archivo abrirá una ventana donde se podrá escribir y guardar un nuevo archivo. Cuando este archivo este listo se podrá acceder a la opción de imprimir.
+
+ 	+ Cada vez que se seleccione la opción impimir, iniciará el proceso necesario para poder enviar el archivo a imprimir.
+
+ 	+ En la ventana principal, al presionar el botón actualizar logs, se mostrará en el log de eventos, todos los eventos realizados por la impresora detalladamente.
+
+ 	+ Al final de proceso, el archivo será movido desde su destino hasta una carpeta dentro del programa llamada "Impresos", donde se almacenarán los archivos procesados

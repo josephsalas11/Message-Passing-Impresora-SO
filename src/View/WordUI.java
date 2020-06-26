@@ -56,6 +56,7 @@ public class WordUI extends javax.swing.JFrame {
         saveHelp = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Editor de Archivos");
 
         printButton.setText("Imprimir");
         printButton.addActionListener(new java.awt.event.ActionListener() {

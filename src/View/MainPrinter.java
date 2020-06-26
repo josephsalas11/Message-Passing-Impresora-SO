@@ -74,6 +74,7 @@ public class MainPrinter extends javax.swing.JFrame {
         logBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Impresora");
 
         openFileBtn.setText("Abrir Archivo");
         openFileBtn.addActionListener(new java.awt.event.ActionListener() {
