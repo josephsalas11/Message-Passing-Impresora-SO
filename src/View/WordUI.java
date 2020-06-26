@@ -192,7 +192,6 @@ public class WordUI extends javax.swing.JFrame {
     }//GEN-LAST:event_saveBtnActionPerformed
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
-        System.out.println("asdasdasdsa");
         //parar el hilo del proceso
         ps.getProducer().setRunning(false);
         ps.getReceiver().setRunning(false);
