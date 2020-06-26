@@ -8,8 +8,13 @@ package View;
 import Controller.FunctionManager;
 import static View.WordUI.fileText;
 import Model.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -42,6 +47,9 @@ public class WordUI extends javax.swing.JFrame {
         printButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         fileArea = new javax.swing.JTextArea();
+        printBtn = new javax.swing.JButton();
+        printHelp = new javax.swing.JLabel();
+        saveHelp = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -57,18 +65,54 @@ public class WordUI extends javax.swing.JFrame {
         jScrollPane1.setViewportView(fileArea);
         fileArea.setText(fileText);
 
+        printBtn.setText("Guardar");
+        printBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                printBtnMouseClicked(evt);
+            }
+        });
+        printBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printBtnActionPerformed(evt);
+            }
+        });
+
+        printHelp.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        printHelp.setForeground(new java.awt.Color(255, 0, 0));
+        printHelp.setText("?");
+        printHelp.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                printHelpMouseClicked(evt);
+            }
+        });
+
+        saveHelp.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        saveHelp.setForeground(new java.awt.Color(255, 0, 0));
+        saveHelp.setText("?");
+        saveHelp.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                saveHelpMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(printButton)
-                .addGap(26, 26, 26))
             .addGroup(layout.createSequentialGroup()
                 .addGap(34, 34, 34)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(39, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(printBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(saveHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(printButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(printHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -76,7 +120,11 @@ public class WordUI extends javax.swing.JFrame {
                 .addGap(37, 37, 37)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(printButton)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(printButton)
+                    .addComponent(printBtn)
+                    .addComponent(printHelp)
+                    .addComponent(saveHelp))
                 .addGap(25, 25, 25))
         );
 
@@ -94,6 +142,42 @@ public class WordUI extends javax.swing.JFrame {
         
     }//GEN-LAST:event_printButtonActionPerformed
 
+    private void printHelpMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_printHelpMouseClicked
+       JOptionPane.showMessageDialog(null, "Activa la simulación de impresión donde el archivo entra a una cola de mensajes que sera recibida por la impresora cuando \n"
+               + "esta finalice de imprimir el mensaje anterior"
+                    , "Información - Imprimir archivo", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_printHelpMouseClicked
+
+    private void printBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_printBtnMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_printBtnMouseClicked
+
+    private void saveHelpMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveHelpMouseClicked
+               JOptionPane.showMessageDialog(null, "Salva el archivo a una carpeta destino"
+                    , "Información - Guardar archivo", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_saveHelpMouseClicked
+
+    private void printBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printBtnActionPerformed
+    
+        JFileChooser save = new JFileChooser();
+        save.showSaveDialog(null);
+        save.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        File file = save.getSelectedFile();
+        try {
+            saveFile(fileArea.getText(), file);
+        } catch (IOException ex) {
+            Logger.getLogger(WordUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_printBtnActionPerformed
+
+    
+    public void saveFile(String message, File file) throws IOException
+    {
+        FileWriter write;
+       write = new FileWriter(file, true);
+        write.write(message);
+        write.close();
+    }
     /**
      * @param args the command line arguments
      */
@@ -134,6 +218,9 @@ public class WordUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea fileArea;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton printBtn;
     private javax.swing.JButton printButton;
+    private javax.swing.JLabel printHelp;
+    private javax.swing.JLabel saveHelp;
     // End of variables declaration//GEN-END:variables
 }
