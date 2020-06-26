@@ -26,7 +26,7 @@ public class MainPrinter extends javax.swing.JFrame {
     private File file;
     private FunctionManager functionManager = FunctionManager.getInstance();
     private String[] str;
-    private int windowCounter = 0;
+    private int windowCounter = 1;
     /**
      * Creates new form MainPaint
      */
@@ -36,6 +36,7 @@ public class MainPrinter extends javax.swing.JFrame {
         functionManager.createMailbox(1, 50, QueueType.FIFO);
         functionManager.createIndirectProcess(1, SynchronizationType.BLOCKING, QueueType.FIFO, 10, SynchronizationType.BLOCKING, 1);
         str = new String[2]; 
+        functionManager.addReceiverMailbox(1, 1);
     }
 
     /**

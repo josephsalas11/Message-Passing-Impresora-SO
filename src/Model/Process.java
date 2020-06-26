@@ -23,7 +23,7 @@ public class Process {
     public Process(int id, SynchronizationType synchronizationTypeProducer, QueueType queueType, int queueSize, SynchronizationType synchronizationTypeReceiver, Process senderProcess){
         this.id = id;
         this.producer = new Producer(queueSize, synchronizationTypeProducer, queueType);
-        this.receiver = new Receiver(senderProcess.producer, synchronizationTypeReceiver);
+        this.receiver = new Receiver(senderProcess.producer, synchronizationTypeReceiver, id);
         this.senderProcess = senderProcess;
         
         //LOG
@@ -36,7 +36,7 @@ public class Process {
     public Process(int id, SynchronizationType synchronizationTypeProducer, QueueType queueType, int queueSize, SynchronizationType synchronizationTypeReceiver){
         this.id = id;
         this.producer = new Producer(queueSize, synchronizationTypeProducer, queueType);
-        this.receiver = new Receiver(null, synchronizationTypeReceiver);
+        this.receiver = new Receiver(null, synchronizationTypeReceiver, id);
         
         //LOG
         Log.getInstance().addLog(id, "El proceso "+id+" de tipo "+synchronizationTypeProducer.toString()+"-"+synchronizationTypeReceiver.toString()+" directo implicito ha sido creado exitosamente");
@@ -49,7 +49,7 @@ public class Process {
     public Process(int id, SynchronizationType synchronizationTypeProducer, QueueType queueType, int queueSize, SynchronizationType synchronizationTypeReceiver, IProducer mailbox){
         this.id = id;
         this.producer = new Producer(queueSize, synchronizationTypeProducer, queueType);
-        this.receiver = new Receiver(mailbox, synchronizationTypeReceiver);
+        this.receiver = new Receiver(mailbox, synchronizationTypeReceiver, id);
         
         //LOG
         Log.getInstance().addLog(id, "El proceso "+id+" de tipo "+synchronizationTypeProducer.toString()+"-"+synchronizationTypeReceiver.toString()+" indirecto ha sido creado exitosamente");

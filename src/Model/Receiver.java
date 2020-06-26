@@ -12,12 +12,14 @@ import static java.lang.Thread.sleep;
  * @author Paulo
  */
 public class Receiver extends Thread implements IReceiver{
+    private int processId;
     private IProducer producer;
     private SynchronizationType synchronizationType;
-    private boolean allowReceive = false;
+    private boolean allowReceive = true;
     private boolean waitReceive = true;
 
-    public Receiver(IProducer producer, SynchronizationType synchronizationType) {
+    public Receiver(IProducer producer, SynchronizationType synchronizationType, int processId) {
+        this.processId = processId;
         this.producer = producer;
         this.synchronizationType = synchronizationType;
     }
@@ -29,6 +31,7 @@ public class Receiver extends Thread implements IReceiver{
                 if(producer != null && allowReceive){
                     //System.out.println("asdasdasda");
                     if(producer.getMessageQueue().isQueueEmpty()){ //hacer validacion si se cumple condicion sleep(1)
+                        //System.out.println("asd");
                         sleep(1000);
                     }
                     else{
@@ -43,6 +46,7 @@ public class Receiver extends Thread implements IReceiver{
     @Override
     public synchronized void getProducerMessage() throws InterruptedException{
         Message message = producer.getMessage(this);
+        //System.out.println(message.getContent());
         if(message != null){
             if(synchronizationType == SynchronizationType.BLOCKING && producer.getClass() != Mailbox.class){
                 //while se obtiene el mensaje: wait
@@ -57,10 +61,10 @@ public class Receiver extends Thread implements IReceiver{
 
         }
         else{
-            System.out.println("El receiver no está autorizado para acceder a este recurso");
+            //System.out.println("El receiver no está autorizado para acceder a este recurso");
         }
-        if(waitReceive)
-            allowReceive = false; //para esperar comando de receive()
+        /*if(waitReceive)
+            allowReceive = false;*/ //para esperar comando de receive()
     }
     
     @Override
@@ -99,6 +103,14 @@ public class Receiver extends Thread implements IReceiver{
     @Override
     public IProducer getProducer() {
         return producer;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Receiver r = (Receiver)obj;
+        if(processId == r.processId)
+            return true;
+        return false;
     }
     
     

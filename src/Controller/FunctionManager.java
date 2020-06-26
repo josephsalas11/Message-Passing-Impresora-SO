@@ -123,6 +123,10 @@ public void sendIndirectProcess(int idSourceProcess, int idDestinationProcess, M
     public void setProcessList(Hashtable<Integer, Process> processList) {
         this.processList = processList;
     }
+
+    public Hashtable<Integer, Mailbox> getMailboxList() {
+        return mailboxList;
+    }
     
     
 }
