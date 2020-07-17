@@ -36,7 +36,7 @@ public class MainPrinter extends javax.swing.JFrame {
     /**
      * Creates new form MainPaint
      */
-    private MainPrinter() {
+    public MainPrinter() {
         initComponents();
         logArea.setEditable(false);
         functionManager.createMailbox(1, 50, QueueType.FIFO);
@@ -73,7 +73,7 @@ public class MainPrinter extends javax.swing.JFrame {
         logHelp = new javax.swing.JLabel();
         logBtn = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Impresora");
 
         openFileBtn.setText("Abrir Archivo");
