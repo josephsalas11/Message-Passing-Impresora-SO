@@ -210,7 +210,7 @@ public class MainPrinter extends javax.swing.JFrame {
         str[1] = Integer.toString(windowCounter);
         WordUI.main(str);
        
-   
+   //Prueba V2
         
     }//GEN-LAST:event_newFileBtnActionPerformed
 
