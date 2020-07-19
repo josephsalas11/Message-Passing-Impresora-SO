@@ -23,7 +23,7 @@ public class FunctionManager {
     public boolean indirect = true;
     public String destinyPath ;
     
-    private FunctionManager() {
+    public FunctionManager() {
         processList = new Hashtable<Integer, Process>();
         mailboxList = new Hashtable<Integer, Mailbox>();
         String filePath = new File("").getAbsolutePath();

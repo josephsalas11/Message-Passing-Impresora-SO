@@ -5,6 +5,7 @@
  */
 package View;
 
+import Controller.FunctionManager;
 import java.util.ArrayList;
 
 /**
@@ -17,6 +18,7 @@ public class MainFrame extends javax.swing.JFrame {
     WordUI editor;
     private ArrayList<MainPrinter> printers = new ArrayList<>();
     private ArrayList<WordUI> editors = new ArrayList<>();
+    private FunctionManager functionManager = new FunctionManager();
     /**
      * Creates new form MainFrame
      */
