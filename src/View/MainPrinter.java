@@ -30,28 +30,19 @@ public class MainPrinter extends javax.swing.JFrame {
     private File file;
     private FunctionManager functionManager = FunctionManager.getInstance();
     private String[] str;
-    private int windowCounter = 1;
+    private int printerId;
     private static MainPrinter singleton = null;
     private String sourcePath;
     /**
      * Creates new form MainPaint
      */
-    public MainPrinter() {
+    public MainPrinter(int printerId, String printerName) {
         initComponents();
         logArea.setEditable(false);
-        functionManager.createMailbox(1, 50, QueueType.FIFO);
-        functionManager.createIndirectProcess(1, SynchronizationType.BLOCKING, QueueType.FIFO, 10, SynchronizationType.BLOCKING, 1);
+        functionManager.createStaticProcess(printerId, SynchronizationType.NONBLOCKING, QueueType.FIFO, 10, SynchronizationType.BLOCKING, printerName, true);
+        functionManager.addReceiverMailbox(1, printerName);
+
         str = new String[3]; 
-        functionManager.addReceiverMailbox(1, 1);
-    }
-    
-    public static MainPrinter getInstance()
-    {
-        if(singleton == null)
-        {
-            singleton = new MainPrinter();
-        }
-        return singleton;
     }
 
     /**
@@ -182,7 +173,6 @@ public class MainPrinter extends javax.swing.JFrame {
 
     private void openFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileBtnActionPerformed
 
-        windowCounter +=1;
         String fileText = "";
         BashFile bashFile = new BashFile();
         JFileChooser openFile = new JFileChooser();
@@ -195,9 +185,12 @@ public class MainPrinter extends javax.swing.JFrame {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainPrinter.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        //YA NO SE USA
+        /*
         str[0] = fileText;
         str[1] = Integer.toString(windowCounter);
-        str[2] = sourcePath;
+        str[2] = sourcePath;*/
         WordUI.main(str);
         
         
@@ -205,9 +198,9 @@ public class MainPrinter extends javax.swing.JFrame {
 
     private void newFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileBtnActionPerformed
 
-        windowCounter +=1;
+        //YA NO SE USA
         str[0] = "";
-        str[1] = Integer.toString(windowCounter);
+        //str[1] = Integer.toString(windowCounter);
         WordUI.main(str);
        
    //Prueba V2
@@ -236,7 +229,7 @@ public class MainPrinter extends javax.swing.JFrame {
          String messageLog = "";
         ArrayList<LogMessage> logs = Log.getInstance().getLogs();
         for (int i = 0; i < logs.size(); i++) {
-            messageLog +=logs.get(i).getMessage()+"\n";
+            messageLog +=logs.get(i).getDetail()+"\n";
         }
         logArea.setText(messageLog);
     }//GEN-LAST:event_logBtnActionPerformed
@@ -274,10 +267,14 @@ public class MainPrinter extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
 
+        //args[0] = idProceso
+        //args[1] = nombreImpresora
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                new MainPrinter().setVisible(true);
+                new MainPrinter(Integer.parseInt(args[0]), args[1]).setVisible(true);
             }
         });
     }

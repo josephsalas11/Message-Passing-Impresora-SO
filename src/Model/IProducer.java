@@ -11,7 +11,15 @@ package Model;
  */
 public interface IProducer {
     void putMessage() throws InterruptedException;
-    Message getMessage(IReceiver receiver) throws InterruptedException;
-    IMessageQueue getMessageQueue();
+    //Message getMessage(IReceiver receiver) throws InterruptedException;
     void sendMessage();
+    boolean addMessage(Message message);
+    SynchronizationType getSynchronizationType();
+    void freeProducer();
+    boolean isBlocked();
+    String stateToString();
+    int getQueueSize();
+    String getQueueMessages();
+    String getQueueLog();
+
 }

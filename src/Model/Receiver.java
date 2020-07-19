@@ -21,53 +21,92 @@ import java.util.regex.Pattern;
  * @author Paulo
  */
 public class Receiver extends Thread implements IReceiver{
-    private int processId;
     private IProducer producer;
     private SynchronizationType synchronizationType;
-    private boolean allowReceive = true;
-    private boolean waitReceive = true;
+    private boolean allowReceive = false;
+    private Mailbox currentMailbox = null;
+    
+    private IMessageQueue messageQueue;
+    private int currentId = -1;
+    private int idProcess;
+    
+    private boolean blocked = false;
 
-    public Receiver(IProducer producer, SynchronizationType synchronizationType, int processId) {
-        this.processId = processId;
+    public Receiver(IProducer producer, SynchronizationType synchronizationType, QueueType queueType, int queueSize, int idProcess) {
         this.producer = producer;
         this.synchronizationType = synchronizationType;
+        this.idProcess = idProcess;
+        
+        if(queueType == QueueType.FIFO)
+            messageQueue = new FIFOQueue(queueSize);
+        else if(queueType == QueueType.PRIORITY){
+            messageQueue = new QueuePriority(queueSize);
+        }
+        
+        //PRUEBA DE LLEGADA
+        if(synchronizationType.equals(SynchronizationType.PRUEBA_LLEGADA))
+           this.allowReceive = true; 
     }
     
     @Override
-    public void run(){
+    public synchronized void run(){
         try {
             while(true){
-                if(producer != null && allowReceive){
-                    //System.out.println("asdasdasda");
-                    if(producer.getMessageQueue().isQueueEmpty()){ //hacer validacion si se cumple condicion sleep(1)
-                        //System.out.println("asd");
-                        sleep(1000);
+                sleep(100);
+                if(synchronizationType == SynchronizationType.BLOCKING){
+                    //blocked = true;
+                }
+                if(synchronizationType != SynchronizationType.PRUEBA_LLEGADA)
+                    wait();
+
+                //if(allowReceive){                    
+                    if(messageQueue.isQueueEmpty() && currentMailbox == null){
+                        sleep(100);
                     }
                     else{
-                        getProducerMessage();
-                    }
-                }
+                        if(currentMailbox != null){
+                            retreiveMessageMailbox();
+                            System.out.println("entro");
+                        }
+                        else
+                            retreiveMessage(); 
+                    }     
+                //}
             }
         } catch (InterruptedException e) {
         }
     }
     
-    @Override
-    public synchronized void getProducerMessage() throws InterruptedException{
-        Message message = producer.getMessage(this);
-        //System.out.println(message.getContent());
-        if(message != null){
-            if(synchronizationType == SynchronizationType.BLOCKING && producer.getClass() != Mailbox.class){
-                //while se obtiene el mensaje: wait
-                wait();
-                System.out.println(message.getContent());
-                sleep(1000);
+    public void retreiveMessage(){
+        Message messageTmp = searchMessage();
+        
+        //desbloqueo de producer
+        if(messageTmp.getSource().getProducer().getSynchronizationType() == SynchronizationType.BLOCKING){ //si producer es blocking
+            messageTmp.getSource().getProducer().freeProducer(); //se desbloquea
+        }
+        Log.getInstance().addLog(messageTmp.getDestinyID(), "Proceso: "+messageTmp.getDestinyID()+ " ha recibido el mensaje '"+messageTmp.getContent()+"' del proceso: "+messageTmp.getSourceID(), false);
+        System.out.println(messageTmp.getContent());
+        if(!synchronizationType.equals(SynchronizationType.PRUEBA_LLEGADA))
+            allowReceive = false;
+    }
+    
+    public void retreiveMessageMailbox(){
+        Message messsageTmp = currentMailbox.retreiveMessage(this);
+        //System.out.println(messsageTmp.getContent());
+        if(messsageTmp != null){
+            if(messsageTmp.getDestiny() == null){
+                Log.getInstance().addLog(idProcess, "El proceso "+idProcess+"  ha recibido el mensaje '"+messsageTmp.getContent()+"' del proceso "+messsageTmp.getSourceID(), true);
             }
-            else { //if(synchronizationType == SynchronizationType.NONBLOCKING)
-                System.out.println(message.getContent());
-                sleep(1000);
-            }
-            String separator = "\\";
+            else
+                Log.getInstance().addLog(messsageTmp.getDestinyID(), "El proceso "+messsageTmp.getDestinyID()+" ha recibido el mensaje '"+messsageTmp.getContent()+"' del proceso "+messsageTmp.getSourceID(), true); //se esta guardando el id del producer
+        
+            //MOVER EL ARCHIVO DE DIRECTORIO
+            moveFile(messsageTmp);
+        }
+    }
+    
+    private void moveFile(Message message){
+        String separator = "\\";
             String[] fileName = message.getContent().split(Pattern.quote(separator));
             String name = fileName[fileName.length-1];
             try {
@@ -76,17 +115,26 @@ public class Receiver extends Thread implements IReceiver{
             } catch (IOException ex) {
                 Logger.getLogger(Receiver.class.getName()).log(Level.SEVERE, null, ex);
             }
-
+    }
+    
+    private Message searchMessage(){
+        Message messageTmp = null;
+        if(currentId == -1){//para ver si es implicito o explicito
+            messageTmp = messageQueue.poll();
         }
         else{
-            //System.out.println("El receiver no está autorizado para acceder a este recurso");
+            messageTmp = messageQueue.getMessageProducer(currentId);
         }
-        /*if(waitReceive)
-            allowReceive = false;*/ //para esperar comando de receive()
+        currentId = -1; //para volver a estado anterior
+        //notify();
+        return messageTmp;
     }
     
     @Override
     public synchronized void receiveMessage(){
+        if(synchronizationType == SynchronizationType.BLOCKING){
+            blocked = false;
+        }
         notify();
     }
 
@@ -100,17 +148,15 @@ public class Receiver extends Thread implements IReceiver{
     }
 
     @Override
-    public void setAllowReceive(boolean allowReceive) {
-        this.allowReceive = allowReceive;
-    }
+    public synchronized void setAllowReceive(boolean allowReceive) {
+        if(!synchronizationType.equals(SynchronizationType.PRUEBA_LLEGADA)){
+            this.allowReceive = allowReceive;
+        }
 
-    public boolean isWaitReceive() {
-        return waitReceive;
-    }
-
-    @Override
-    public void setWaitReceive(boolean waitReceive) {
-        this.waitReceive = waitReceive;
+        if(synchronizationType == SynchronizationType.BLOCKING){
+            blocked = false;
+        }
+        notify();
     }
 
     @Override
@@ -121,17 +167,73 @@ public class Receiver extends Thread implements IReceiver{
     @Override
     public IProducer getProducer() {
         return producer;
+    }   
+
+    @Override
+    public boolean addMessage(Message message) {
+        if(blocked){
+            System.out.println("El proceso está bloqueado, no puede recibir mensajes");
+            return false;
+        }
+        else if(messageQueue.addMessage(message) == false){ //aqui se agrega
+            System.out.println("No se pueden agregar más procesos, la cola está llena");
+            return false;
+        }
+        else{
+            if(synchronizationType == SynchronizationType.BLOCKING)
+                blocked = true;
+            return true;
+        }
     }
 
     @Override
-    public boolean equals(Object obj) {
-        Receiver r = (Receiver)obj;
-        if(processId == r.processId)
-            return true;
-        return false;
+    public void setCurrentId(int id) {
+        currentId = id;
+    }
+
+    public Mailbox getCurrentMailbox() {
+        return currentMailbox;
+    }
+
+    @Override
+    public void setCurrentMailbox(Mailbox currentMailbox) {
+        this.currentMailbox = currentMailbox;
+    }
+
+    @Override
+    public int getIdProcess() {
+        return idProcess;
+    }
+
+    @Override
+    public boolean isBlocked() {
+        return blocked;
     }
     
+    @Override
+    public String stateToString() {
+        String result = "";
+        if(blocked){
+            result = "Bloqueado";
+        }
+        else{
+            result = "Desbloqueado";
+        }
+        return result;
+    }
     
-    
-    
+    @Override
+    public int getQueueSize() {
+        return messageQueue.getQueueSize();
+    }
+
+    @Override
+    public String getQueueMessages() {
+        return messageQueue.toString();
+    }  
+
+    @Override
+    public String getQueueLog() {
+        return messageQueue.getLogToString();
+    }
 }

@@ -5,7 +5,10 @@
  */
 package Model;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -14,6 +17,7 @@ import java.util.ArrayList;
 public class Log {
     private ArrayList<LogMessage> logs;
     private static Log singleton = null;
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
 
     private Log() {
         logs = new ArrayList<>();
@@ -26,10 +30,13 @@ public class Log {
         return singleton;
     }
     
-    public void addLog(int processId, String message){
-        LogMessage logMessage = new LogMessage(processId, message);
+    public void addLog(int associatedId, String detail, boolean isProcess){ 
+        
+        LocalDateTime now = LocalDateTime.now();  
+        String finalDetail = dtf.format(now)+": "+detail;
+        LogMessage logMessage = new LogMessage(associatedId, finalDetail, now, isProcess);
         logs.add(logMessage);
-        System.out.println(message);
+        System.out.println(detail);
     }
 
     public ArrayList<LogMessage> getLogs() {
@@ -39,9 +46,15 @@ public class Log {
     public ArrayList getProcessLog(int idProcess){
         ArrayList result = new ArrayList<>();
         for(int i=0; i<logs.size(); i++){
-            if(logs.get(i).getAssociatedProcessId() == idProcess)
+            if(logs.get(i).getAssociatedId() == idProcess){
                 result.add(logs.get(i));
+                System.out.println(logs.get(i).getDetail());
+            }
         }
         return result;
+    }
+    
+    public void clearLog(){
+        logs.clear();
     }
 }

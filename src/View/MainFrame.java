@@ -16,6 +16,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     MainPrinter printer;    
     WordUI editor;
+    
     private ArrayList<MainPrinter> printers = new ArrayList<>();
     private ArrayList<WordUI> editors = new ArrayList<>();
     private FunctionManager functionManager = new FunctionManager();

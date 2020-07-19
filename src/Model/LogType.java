@@ -9,6 +9,6 @@ package Model;
  *
  * @author Paulo
  */
-public enum SynchronizationType {
-    BLOCKING, NONBLOCKING, PRUEBA_LLEGADA
+public enum LogType {
+    PROCESS, MAILBOX
 }
