@@ -20,6 +20,10 @@ public interface IMessageQueue {
     boolean isQueueEmpty();
     Message getMessage();
     void remove(Message message);
-    void poll();
-    
+    Message poll();
+    Message getMessageProducer(int sourceId);
+    Message getMessageReceiver(int destinyId);
+    @Override
+    String toString();
+    String getLogToString();
 }

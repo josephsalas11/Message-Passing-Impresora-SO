@@ -5,9 +5,8 @@
  */
 package Model;
 
-import Controller.FunctionManager;
-
-
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
@@ -15,98 +14,108 @@ import Controller.FunctionManager;
  */
 public class Process {
     private int id;
+    private String name;
+    private boolean printer;
     private Producer producer;
     private IReceiver receiver;
-    private Process senderProcess; //si es direccionamiento directo explícito
-    
-    //para direccionamiento directo explicito
-    public Process(int id, SynchronizationType synchronizationTypeProducer, QueueType queueType, int queueSize, SynchronizationType synchronizationTypeReceiver, Process senderProcess){
-        this.id = id;
-        this.producer = new Producer(queueSize, synchronizationTypeProducer, queueType);
-        this.receiver = new Receiver(senderProcess.producer, synchronizationTypeReceiver, id);
-        this.senderProcess = senderProcess;
-        
-        //LOG
-        Log.getInstance().addLog(id, "El proceso "+id+" de tipo "+synchronizationTypeProducer.toString()+"-"+synchronizationTypeReceiver.toString()+" directo explicito ha sido creado exitosamente");
-        producer.start();
-        receiver.start();
+
+    public Process() {
+        System.out.println("Creo un proceso");
     }
     
-    //para direccionamiento directo implicito
-    public Process(int id, SynchronizationType synchronizationTypeProducer, QueueType queueType, int queueSize, SynchronizationType synchronizationTypeReceiver){
+    //para direccionamiento directo
+    public Process(int id, SynchronizationType synchronizationTypeProducer, QueueType queueType, int queueSize, SynchronizationType synchronizationTypeReceiver, String name, boolean printer){
         this.id = id;
-        this.producer = new Producer(queueSize, synchronizationTypeProducer, queueType);
-        this.receiver = new Receiver(null, synchronizationTypeReceiver, id);
+        this.producer = new Producer(synchronizationTypeProducer, queueType, queueSize);
+        this.receiver = new Receiver(null, synchronizationTypeReceiver, queueType, queueSize, id);
+        this.name = name;
+        this.printer = printer;
         
         //LOG
-        Log.getInstance().addLog(id, "El proceso "+id+" de tipo "+synchronizationTypeProducer.toString()+"-"+synchronizationTypeReceiver.toString()+" directo implicito ha sido creado exitosamente");
+        String detail = "ID del proceso : "+id + " ~~ "+"Tipo de proceso : "+synchronizationTypeProducer.toString()+"-"+synchronizationTypeReceiver.toString()
+                + " ~~ " +" ha sido creado exitosamente";
+        Log.getInstance().addLog(id, detail, true);
 
         producer.start();
         receiver.start();
     }
     
-    //para direccionamiento indirecto
-    public Process(int id, SynchronizationType synchronizationTypeProducer, QueueType queueType, int queueSize, SynchronizationType synchronizationTypeReceiver, IProducer mailbox){
-        this.id = id;
-        this.producer = new Producer(queueSize, synchronizationTypeProducer, queueType);
-        this.receiver = new Receiver(mailbox, synchronizationTypeReceiver, id);
-        
-        //LOG
-        Log.getInstance().addLog(id, "El proceso "+id+" de tipo "+synchronizationTypeProducer.toString()+"-"+synchronizationTypeReceiver.toString()+" indirecto ha sido creado exitosamente");
-        
-        producer.start();
-        receiver.start();
-    }
-    
-    public Message createMessage(Process destination, String messageContent, MessageType messageType, int messageLength){
-        Message message = new Message(messageType, destination.id, id, messageLength, messageContent);
-        return message;
-    }
-    
-    public Message createMessagePriority(Process destination, String messageContent, MessageType messageType, int messageLength, int priority){
-        Message message = new Message(messageType, destination.id, id, messageLength, messageContent, priority);
-        return message;
-    }
-    
-    public void send(Process destination, Message message){
-        producer.getMessageQueue().addMessage(message);
-        //LOG
-        Log.getInstance().addLog(id, "El proceso "+id+" ha enviado el comando para enviar un mensaje al proceso "+destination.id);
-    }
-    
-    public void sendMailbox(Mailbox mailbox, Message message) throws InterruptedException{
-        mailbox.addMessage(message);
-        //LOG
-        Log.getInstance().addLog(id, "El proceso "+message.getSourceID()+" ha enviado el comando para enviar un mensaje al proceso "+message.getDestinyID()+ " a través del mailbox "+mailbox.getId());
-        //mailbox.putMessage();
-        System.out.println("Entro al send Mailbox");
-    }
-    
-    public void receive(Process source){
-        if(senderProcess != null && source.id != senderProcess.id){
-            System.out.println("El proceso que envió el mensaje no corresponde con el especificado en este proceso");
-            //LOG
-            Log.getInstance().addLog(id, "El proceso "+id+" no puede recibir el mensaje porque el proceso "+source.id+" no está autorizado eb este proceso");
+    public Message createMessage(Process destination, String messageContent, MessageType messageType, int messageLength, Process source, boolean isMailbox){
+        Message message = null;
+        if(destination == null){
+            message = new Message(messageType, -1, id, messageLength, messageContent, source, destination, isMailbox);
         }
         else{
-           //recibir mensaje
-           if(FunctionManager.getInstance().indirect == false)
-           {
-               receiver.setProducer(source.getProducer());
-           }
-            //receiver.setProducer(source.getProducer());
-            receiver.setAllowReceive(true);         
-            Log.getInstance().addLog(id, "El proceso "+id+" ha enviado el comando para recibir un mensaje del proceso "+source.id);
+            message = new Message(messageType, destination.id, id, messageLength, messageContent, source, destination, isMailbox);
         }
+        return message;
+    }
+    
+    public Message createMessagePriority(Process destination, String messageContent, MessageType messageType, int messageLength, int priority, Process source, boolean isMailbox){
+        Message message = null;
+        if(destination == null){
+            message = new Message(messageType, -1, id, messageLength, messageContent, priority, source, destination, isMailbox);
+        }
+        else{
+            message = new Message(messageType, destination.id, id, messageLength, messageContent, priority, source, destination, isMailbox);
+        }
+        return message;
+    }
+    
+    //directo
+    public void send(Process destination, Message message){
+        
+        if(producer.addMessage(message) == false){
+            //System.out.println("No se pudo ingresar el mensaje porque la cola esta llena");
+            Log.getInstance().addLog(id, "No se pudo ingresar el mensaje porque la cola esta llena", true);
+        }
+        //LOG
+        Log.getInstance().addLog(id, "Proceso: "+id+" ha enviado el comando para enviar el mensaje '"+message.getContent()+"' al proceso: "+destination.id, true);
+    }
+    
+    //indirecto dinamico
+    public void sendMailbox(Mailbox mailbox, Message message) throws InterruptedException{
+        if(mailbox.addMessage(message) == false){
+            //System.out.println("No se pudo ingresar el mensaje porque la cola esta llena o el proceso no está autorizado en el mailbox");
+            Log.getInstance().addLog(id, "No se pudo ingresar el mensaje porque la cola esta llena o el proceso no está autorizado en el mailbox", true);
+        }
+        if(message.getDestinyID() == -1)
+            Log.getInstance().addLog(id, "Proceso: "+message.getSourceID()+" ha enviado la señal para enviar el mensaje '"+message.getContent()+"' a través del mailbox: "+mailbox.getId(), true);
+        else
+            Log.getInstance().addLog(id, "Proceso: "+message.getSourceID()+" ha enviado la señal para enviar el mensaje '"+message.getContent()+"' al proceso: "+message.getDestinyID()+ " a través del mailbox: "+mailbox.getId(), true);
+        //mailbox.putMessage();
+    }
+    
+    //implicito
+    public void receive(){
+        receiver.setAllowReceive(true);         
+        Log.getInstance().addLog(id, "Proceso: "+id+" ha enviado la señal para recibir un mensaje", true);
+    }
+    
+    //explicito
+    public void receive(Process source){
+       //recibir mensaje
+        receiver.setCurrentId(source.getId());
+        receiver.setAllowReceive(true);
+        Log.getInstance().addLog(id, "Proceso: "+id+" ha enviado la señal para recibir un mensaje del proceso: "+source.id, true);
+    }
+    
+    //indirecto
+    public void receiveMailbox(Mailbox mailbox){
+        receiver.setCurrentMailbox(mailbox);
+        receiver.setAllowReceive(true);
+        Log.getInstance().addLog(id, "Proceso "+id+" ha enviado la señal para recibir un mensaje del mailbox "+mailbox.getId(), true);
+    }
+
+    public void stopProcess()
+    {
+        producer.stop();
+        receiver.stop();
     }
     
 
     public int getId() {
         return id;
-    }
-
-    public void setWaitReceive(boolean waitReceive) {
-        receiver.setWaitReceive(false);
     }
 
     public Producer getProducer() {
@@ -116,9 +125,49 @@ public class Process {
     public IReceiver getReceiver() {
         return receiver;
     }
+
+    public void setReceiver(IReceiver receiver) {
+        this.receiver = receiver;
+    }
+
+    public void setProducer(Producer producer) {
+        this.producer = producer;
+    }
     
-    
-    
-    
-    
+    @Override
+    public String toString(){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();  
+        
+        String result = dtf.format(now)+"\n"+
+                        "ID del proceso: "+id+"\n"+
+                        "Sender:\n"+
+                        "Sincronización: "+producer.getSynchronizationType().toString()+"\n"+
+                        "Estado: "+producer.stateToString()+"\n"+
+                        "Tamaño de la cola: "+producer.getQueueSize()+"\n"+
+                        "Mensajes:\n"+
+                        producer.getQueueMessages()+"\n\n"+
+                        "Receiver:\n"+
+                        "Sincronización: "+receiver.getSynchronizationType().toString()+"\n"+
+                        "Estado: "+receiver.stateToString()+"\n"+
+                        "Tamaño de la cola: "+receiver.getQueueSize()+"\n"+
+                        receiver.getQueueMessages()+"\n\n";
+        
+        return result;
+    }
+
+    public String getQueueLog() {
+        String result = "";
+        result = result.concat("Cola del producer:\n"+producer.getQueueLog()+"\n\n");
+        result = result.concat("Cola del receiver:\n"+receiver.getQueueLog()+"\n");
+        return result;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isPrinter() {
+        return printer;
+    }
 }

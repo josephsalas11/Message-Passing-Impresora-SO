@@ -17,14 +17,14 @@ import java.io.File;
 
 public class FunctionManager {
 
-    Hashtable<Integer, Process> processList;
+    Hashtable<String, Process> processList;
     Hashtable<Integer, Mailbox> mailboxList;
     static FunctionManager singleton = null;
-    public boolean indirect = true;
+
     public String destinyPath ;
     
     private FunctionManager() {
-        processList = new Hashtable<Integer, Process>();
+        processList = new Hashtable<String, Process>();
         mailboxList = new Hashtable<Integer, Mailbox>();
         String filePath = new File("").getAbsolutePath();
         filePath =  filePath.concat("\\Impresos");
@@ -41,97 +41,153 @@ public class FunctionManager {
         return singleton;
     }
     
-    public void createExplicitProcess(int processCounter,SynchronizationType STP,QueueType queueType, int queueSizeType, SynchronizationType STR, int ID_SP)
+    public void createDirectProcess(int processCounter,SynchronizationType STP,QueueType queueType, int queueSizeType, SynchronizationType STR, String name, boolean printer)
     {
-        System.out.println(ID_SP);
-        Process SP = processList.get(1);
-        processList.put(processCounter, new Process(processCounter, STP, queueType, queueSizeType, STR, SP));
+        if(!isProcessNameTaken(name))
+            processList.put(name, new Process(processCounter, STP, queueType, queueSizeType,STR, name, printer));
+    }
+    
+    public void createStaticProcess(int processCounter,SynchronizationType STP,QueueType queueType, int queueSizeType, SynchronizationType STR, String name, boolean printer)
+    {
+        if(!isProcessNameTaken(name)){
+            createMailbox(mailboxList.size()+1,queueSizeType,queueType, false);
+            processList.put(name, new Process(processCounter, STP,
+                    queueType, queueSizeType,STR, name, printer));
+            addReceiverMailbox(mailboxList.size(),name);
+        }
+    }
+    
+    public void createDynamicProcess(int processCounter,SynchronizationType STP,QueueType queueType, int queueSizeType, SynchronizationType STR, String name, boolean printer)
+    {
+        if(!isProcessNameTaken(name))
+            processList.put(name, new Process(processCounter, STP, queueType, queueSizeType,STR, name, printer));
+    }
+    
+    private boolean isProcessNameTaken(String name){
+        if(processList.get(name) != null)
+            return true;
+        return false;
+    }
+    
+    //Ya no se usa
+    public void resetSystem()
+    {
+        for (int i = 1; i <= processList.size(); i++) {
+            processList.get(i).stopProcess();    
+        }
+        processList.clear();
+        mailboxList.clear();
+    }
+    
+    public boolean sendDirectProcess(String sourceProcessName, String destinationProcessName, MessageType messageType, int messageLength, String messageContent, int priority)
+    { 
+        Process source = processList.get(sourceProcessName);
+        Process destination = processList.get(destinationProcessName);
+        
+        //validacion para determinar que el producer y el receiver existan en el controlador
+        if(source == null || destination == null){
+            System.out.println("Operacion invalida"); //hacer log de error
+            return false;
+        }
+        
+        else{
+            Message message = null;
+        
+            if(priority == 0)
+                message = source.createMessage(destination, messageContent, messageType, messageLength, processList.get(sourceProcessName), false);
+            else
+                message = source.createMessagePriority(destination, messageContent, messageType, messageLength, priority, processList.get(sourceProcessName), false);
 
+            source.send(destination, message);
+            return true;
+        }
     }
     
-    public Model.Process createImplicitProcess(int processCounter,SynchronizationType STP,QueueType queueType, int queueSizeType, SynchronizationType STR)
-    {
-        Process psTemp = new Process(processCounter, STP,queueType, queueSizeType,STR);
-         processList.put(processCounter, psTemp);
-         return psTemp;
-    }
-    
-    public void createIndirectProcess(int processCounter,SynchronizationType STP,QueueType queueType, int queueSizeType, SynchronizationType STR, int ID_MB)
-    {
-        Mailbox mailbox = mailboxList.get(ID_MB);
-        processList.put(processCounter, new Process(processCounter, STP,
-                queueType, queueSizeType,STR, mailbox));
-    }
-    
-    public void sendDirectProcess(int idSourceProcess, int idDestinationProcess, MessageType messageType, int messageLength, String messageContent, int priority)
-    {
-        Process source = processList.get(idSourceProcess);
-        Process destination = processList.get(idDestinationProcess);
-        Message message = null;
-        
-        if(priority != -1)
-            message = source.createMessage(destination, messageContent, messageType, messageLength);
-        else
-            message = source.createMessagePriority(destination, messageContent, messageType, messageLength, priority);
-        
-        source.send(destination, message);
-        
-    }
-    
-public void sendIndirectProcess(int idSourceProcess, int idDestinationProcess, MessageType messageType, int messageLength, String messageContent, int priority) throws InterruptedException
-    {
-        Process source = processList.get(idSourceProcess);
-        Process destination = processList.get(idDestinationProcess);
+    public boolean sendIndirectProcess(String sourceProcessName, int idDestinationProcess, MessageType messageType, int messageLength, String messageContent, int priority) throws InterruptedException
+    {        
+        Process source = processList.get(sourceProcessName);
+        Process destination = null;
         Mailbox mailbox = mailboxList.get(idDestinationProcess);
+        
+        //validacion para determinar que el producer, el receiver y el mailbox existan en el controlador
+        if(source == null || mailbox == null){
+            System.out.println("Operacion invalida" +sourceProcessName+" "+idDestinationProcess); //hacer log de error
+            return false;
+        }
+        
+        else{
+            Message message = null;
+        
+            if(priority == 0)
+                message = source.createMessage(destination, messageContent, messageType, messageLength, processList.get(sourceProcessName), true);
+            else
+                message = source.createMessagePriority(destination, messageContent, messageType, messageLength, priority, processList.get(sourceProcessName), true);
 
-        Message message = null;
-        
-        if(priority == -1)
-            message = source.createMessage(destination, messageContent, messageType, messageLength);
-        else
-            message = source.createMessagePriority(destination, messageContent, messageType, messageLength, priority);
-        
-        source.sendMailbox(mailbox, message);
-        
+            source.sendMailbox(mailbox, message);
+            return true;
+        } 
     }
     
-    public void receiveMessage(int idSourceProcess, int idDestinationProcess)
+    public void receiveMessage(String sourceProcessName, String destinationProcessName)
     {
-        Process source = processList.get(idSourceProcess);
-        Process destination = processList.get(idDestinationProcess);
+        Process source = processList.get(sourceProcessName);
+        Process destination = processList.get(destinationProcessName);
         destination.receive(source);
     }
     
-    public void createMailbox(int ID, int queueSize, QueueType queueType)
+    public void receiveImplicitMessage(String destinationProcessName)
     {
-        mailboxList.put(ID, new Mailbox(ID,queueSize, queueType));
-    } 
+        Process destination = processList.get(destinationProcessName);
+        destination.receive();
+    }
     
-    public void addReceiverMailbox(int mailboxId,int receiverId)
+    public void receiveIndirectMessage(int mailboxId, String destinacionProcessName)
+    {
+        Mailbox mailbox = mailboxList.get(mailboxId);
+        Process destination = processList.get(destinacionProcessName);
+        destination.receiveMailbox(mailbox);
+    }
+    
+    public void createMailbox(int ID, int queueSize, QueueType queueType, boolean dynamic)
+    {
+        mailboxList.put(ID, new Mailbox(ID,queueSize, queueType, dynamic));
+    }  
+    
+    public void addReceiverMailbox(int mailboxId, String receiverName)
     {
         
         Mailbox mailbox = mailboxList.get(mailboxId);
-        Process receiver = processList.get(receiverId);
+        Process receiver = processList.get(receiverName);
         mailbox.addReceiver(receiver);
     }
     
-    public Process display(int processID)
+    public void addProducerMailbox(int mailboxId, String producerName)
+    {   
+        //Añadir excepción si no encuentra el producer o sino encuentra el mailbox
+        Mailbox mailbox = mailboxList.get(mailboxId);
+        Process producer = processList.get(producerName);
+        mailbox.addProducer(producer);
+        //LOG
+    }
+    
+    public Process getProcess(String name)
     {
-        Process displayProcess = processList.get(processID);
+        Process displayProcess = processList.get(name);
         return displayProcess;
     }
     
-    public Hashtable<Integer, Process> getProcessList() {
+    public Hashtable<String, Process> getProcessList() {
         return processList;
-    }
-
-    public void setProcessList(Hashtable<Integer, Process> processList) {
-        this.processList = processList;
     }
 
     public Hashtable<Integer, Mailbox> getMailboxList() {
         return mailboxList;
     }
     
-    
+    public Process getProcessPrinter(String name){
+        Process process = processList.get(name);
+        if(process != null && process.isPrinter())
+            return process;
+        return null;
+    }
 }
