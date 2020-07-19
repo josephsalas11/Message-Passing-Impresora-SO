@@ -20,7 +20,8 @@ public class Process {
     private Process senderProcess; //si es direccionamiento directo explícito
     
     //para direccionamiento directo explicito
-    public Process(int id, SynchronizationType synchronizationTypeProducer, QueueType queueType, int queueSize, SynchronizationType synchronizationTypeReceiver, Process senderProcess){
+    public Process(int id, SynchronizationType synchronizationTypeProducer, QueueType queueType, int queueSize, 
+            SynchronizationType synchronizationTypeReceiver, Process senderProcess){
         this.id = id;
         this.producer = new Producer(queueSize, synchronizationTypeProducer, queueType);
         this.receiver = new Receiver(senderProcess.producer, synchronizationTypeReceiver, id);
@@ -33,7 +34,8 @@ public class Process {
     }
     
     //para direccionamiento directo implicito
-    public Process(int id, SynchronizationType synchronizationTypeProducer, QueueType queueType, int queueSize, SynchronizationType synchronizationTypeReceiver){
+    public Process(int id, SynchronizationType synchronizationTypeProducer, QueueType queueType, int queueSize, 
+            SynchronizationType synchronizationTypeReceiver){
         this.id = id;
         this.producer = new Producer(queueSize, synchronizationTypeProducer, queueType);
         this.receiver = new Receiver(null, synchronizationTypeReceiver, id);
@@ -46,7 +48,8 @@ public class Process {
     }
     
     //para direccionamiento indirecto
-    public Process(int id, SynchronizationType synchronizationTypeProducer, QueueType queueType, int queueSize, SynchronizationType synchronizationTypeReceiver, IProducer mailbox){
+    public Process(int id, SynchronizationType synchronizationTypeProducer, QueueType queueType, int queueSize, 
+            SynchronizationType synchronizationTypeReceiver, IProducer mailbox){
         this.id = id;
         this.producer = new Producer(queueSize, synchronizationTypeProducer, queueType);
         this.receiver = new Receiver(mailbox, synchronizationTypeReceiver, id);
