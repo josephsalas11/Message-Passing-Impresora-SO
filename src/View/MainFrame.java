@@ -17,9 +17,11 @@ public class MainFrame extends javax.swing.JFrame {
     MainPrinter printer;    
     WordUI editor;
     
+    
     private ArrayList<MainPrinter> printers = new ArrayList<>();
     private ArrayList<WordUI> editors = new ArrayList<>();
-    private FunctionManager functionManager = new FunctionManager();
+    private FunctionManager functionManager = FunctionManager.getInstance();
+
     /**
      * Creates new form MainFrame
      */
@@ -80,16 +82,19 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void printerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printerBtnActionPerformed
-       printer = new MainPrinter();
-       printer.setVisible(true);
-       printers.add(printer);
+
+       NamePrinter namePrinter = new NamePrinter(); 
+       namePrinter.setVisible(true);
+       //printer = new MainPrinter();
+       //printer.setVisible(true);
+       //printers.add(printer);
        
     }//GEN-LAST:event_printerBtnActionPerformed
 
     private void editorBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editorBtnActionPerformed
-        editor = new WordUI();
-        editor.setVisible(true);
-        editors.add(editor);
+        NameEditor nameEditor = new NameEditor();
+        nameEditor.setVisible(true);
+        //editors.add(nameEditor);
     }//GEN-LAST:event_editorBtnActionPerformed
 
     /**

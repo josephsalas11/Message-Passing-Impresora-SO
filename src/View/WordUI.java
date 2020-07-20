@@ -5,10 +5,12 @@
  */
 package View;
 
+import Controller.BashFile;
 import Controller.FunctionManager;
 import static View.WordUI.fileText;
 import Model.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,12 +32,15 @@ public class WordUI extends javax.swing.JFrame {
     private Model.Process ps;
     public static int processCounter;
     public static String sourcePath;
+     private File file;
+     private String[] str;
     /**
      * Creates new form WordUI
      */
-    public WordUI() {
+    public WordUI(int processID, String editorName) {
         initComponents();
-        ps = fm.createImplicitProcess(processCounter, SynchronizationType.NONBLOCKING, QueueType.FIFO, 10, SynchronizationType.NONBLOCKING);
+        this.setTitle(editorName);
+        //ps = fm.createImplicitProcess(processCounter, SynchronizationType.NONBLOCKING, QueueType.FIFO, 10, SynchronizationType.NONBLOCKING);
         //printButton.setVisible(false);
     }
 
@@ -54,6 +59,7 @@ public class WordUI extends javax.swing.JFrame {
         saveBtn = new javax.swing.JButton();
         printHelp = new javax.swing.JLabel();
         saveHelp = new javax.swing.JLabel();
+        openBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Editor de Archivos");
@@ -100,36 +106,44 @@ public class WordUI extends javax.swing.JFrame {
             }
         });
 
+        openBtn.setText("Abrir Archivo");
+        openBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(34, 34, 34)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(39, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(saveBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(saveHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(printButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(printHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(90, 90, 90)
+                        .addComponent(openBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
+                        .addComponent(printButton)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(printHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(37, 37, 37)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addContainerGap(37, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(53, 53, 53)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(printButton)
                     .addComponent(saveBtn)
                     .addComponent(printHelp)
-                    .addComponent(saveHelp))
+                    .addComponent(saveHelp)
+                    .addComponent(openBtn))
                 .addGap(25, 25, 25))
         );
 
@@ -186,6 +200,22 @@ public class WordUI extends javax.swing.JFrame {
         printButton.update(this.getGraphics());
     }//GEN-LAST:event_saveBtnActionPerformed
 
+    private void openBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openBtnActionPerformed
+        String fileText = "";
+        BashFile bashFile = new BashFile();
+        JFileChooser openFile = new JFileChooser();
+        openFile.showOpenDialog(null);
+        openFile.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES); 
+        file = openFile.getSelectedFile();
+        sourcePath = file.getAbsolutePath();
+        try {
+            fileText = bashFile.getFileText(file);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MainPrinter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_openBtnActionPerformed
+
     
     public void saveFile(String message, File file) throws IOException
     {
@@ -227,7 +257,7 @@ public class WordUI extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             
             public void run() {     
-                new WordUI().setVisible(true);
+                new WordUI(Integer.parseInt(args[0]), args[1]).setVisible(true);
             }
         });
     }
@@ -235,6 +265,7 @@ public class WordUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea fileArea;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton openBtn;
     private javax.swing.JButton printButton;
     private javax.swing.JLabel printHelp;
     private javax.swing.JButton saveBtn;

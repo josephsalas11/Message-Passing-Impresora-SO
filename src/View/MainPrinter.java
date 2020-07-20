@@ -41,7 +41,7 @@ public class MainPrinter extends javax.swing.JFrame {
         logArea.setEditable(false);
         functionManager.createStaticProcess(printerId, SynchronizationType.NONBLOCKING, QueueType.FIFO, 10, SynchronizationType.BLOCKING, printerName, true);
         functionManager.addReceiverMailbox(1, printerName);
-
+        this.setTitle(printerName);
         str = new String[3]; 
     }
 
@@ -54,32 +54,14 @@ public class MainPrinter extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        openFileBtn = new javax.swing.JButton();
-        newFileBtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         logArea = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
-        newFileHelp = new javax.swing.JLabel();
-        openFileHelp = new javax.swing.JLabel();
         logHelp = new javax.swing.JLabel();
         logBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Impresora");
-
-        openFileBtn.setText("Abrir Archivo");
-        openFileBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openFileBtnActionPerformed(evt);
-            }
-        });
-
-        newFileBtn.setText("Nuevo Archivo");
-        newFileBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newFileBtnActionPerformed(evt);
-            }
-        });
 
         logArea.setColumns(20);
         logArea.setRows(5);
@@ -87,24 +69,6 @@ public class MainPrinter extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel1.setText("Log de eventos");
-
-        newFileHelp.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        newFileHelp.setForeground(new java.awt.Color(255, 0, 0));
-        newFileHelp.setText("?");
-        newFileHelp.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                newFileHelpMouseClicked(evt);
-            }
-        });
-
-        openFileHelp.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        openFileHelp.setForeground(new java.awt.Color(255, 0, 0));
-        openFileHelp.setText("?");
-        openFileHelp.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                openFileHelpMouseClicked(evt);
-            }
-        });
 
         logHelp.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         logHelp.setForeground(new java.awt.Color(255, 0, 0));
@@ -129,24 +93,16 @@ public class MainPrinter extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(68, 68, 68)
-                        .addComponent(openFileBtn)
-                        .addGap(18, 18, 18)
-                        .addComponent(openFileHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34)
-                        .addComponent(newFileBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(newFileHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(logBtn))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(46, 46, 46)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(logHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(198, 198, 198)
+                        .addComponent(logBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(53, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -158,66 +114,13 @@ public class MainPrinter extends javax.swing.JFrame {
                     .addComponent(logHelp))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(openFileBtn)
-                    .addComponent(newFileBtn)
-                    .addComponent(newFileHelp)
-                    .addComponent(openFileHelp)
-                    .addComponent(logBtn))
-                .addGap(25, 25, 25))
+                .addGap(18, 18, 18)
+                .addComponent(logBtn)
+                .addGap(44, 44, 44))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void openFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileBtnActionPerformed
-
-        String fileText = "";
-        BashFile bashFile = new BashFile();
-        JFileChooser openFile = new JFileChooser();
-        openFile.showOpenDialog(null);
-        openFile.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES); 
-        file = openFile.getSelectedFile();
-        sourcePath = file.getAbsolutePath();
-        try {
-            fileText = bashFile.getFileText(file);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(MainPrinter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        //YA NO SE USA
-        /*
-        str[0] = fileText;
-        str[1] = Integer.toString(windowCounter);
-        str[2] = sourcePath;*/
-        WordUI.main(str);
-        
-        
-    }//GEN-LAST:event_openFileBtnActionPerformed
-
-    private void newFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileBtnActionPerformed
-
-        //YA NO SE USA
-        str[0] = "";
-        //str[1] = Integer.toString(windowCounter);
-        WordUI.main(str);
-       
-   //Prueba V2
-        
-    }//GEN-LAST:event_newFileBtnActionPerformed
-
-    private void newFileHelpMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_newFileHelpMouseClicked
-         JOptionPane.showMessageDialog(null, "Este botón desplegará una ventana donde se podrá crear un nuevo archivo de texto desde cero, para posteriormente imprimirlo. \n"
-                 + "Este archivo también se podrá guardar."
-                    , "Información de logs", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_newFileHelpMouseClicked
-
-    private void openFileHelpMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_openFileHelpMouseClicked
-                 JOptionPane.showMessageDialog(null, "Con este botón podrá seleccionar un archivo que desee imprimir y se desplegará una pantalla de previsualización del \n"
-                         + "archivo donde se podrá editar antes de mandar a imprimir"
-                    , "Información- abrir archivo", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_openFileHelpMouseClicked
 
     private void logHelpMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logHelpMouseClicked
                  JOptionPane.showMessageDialog(null, "En esta pantalla se desplegarán los logs de cada uno de los eventos de procesamiento de \n"
@@ -285,9 +188,5 @@ public class MainPrinter extends javax.swing.JFrame {
     private javax.swing.JTextArea logArea;
     private javax.swing.JButton logBtn;
     private javax.swing.JLabel logHelp;
-    private javax.swing.JButton newFileBtn;
-    private javax.swing.JLabel newFileHelp;
-    private javax.swing.JButton openFileBtn;
-    private javax.swing.JLabel openFileHelp;
     // End of variables declaration//GEN-END:variables
 }
