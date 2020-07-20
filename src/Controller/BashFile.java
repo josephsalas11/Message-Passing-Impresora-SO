@@ -44,6 +44,7 @@ public class BashFile {
         fileText += fileReader.nextLine();
         fileText +="\n";      
         }
+        fileReader.close();
         System.out.println(fileText);
         return fileText;
     }

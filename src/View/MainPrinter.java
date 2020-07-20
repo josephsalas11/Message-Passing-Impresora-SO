@@ -33,17 +33,24 @@ public class MainPrinter extends javax.swing.JFrame {
     private int printerId;
     private static MainPrinter singleton = null;
     private String sourcePath;
+    private Model.Process process;
     /**
      * Creates new form MainPaint
      */
     public MainPrinter(int printerId, String printerName) {
         initComponents();
         logArea.setEditable(false);
-        functionManager.createStaticProcess(printerId, SynchronizationType.NONBLOCKING, QueueType.FIFO, 10, SynchronizationType.BLOCKING, printerName, true);
-        functionManager.addReceiverMailbox(1, printerName);
+        process = functionManager.createStaticProcess(printerId, SynchronizationType.NONBLOCKING, QueueType.FIFO, 10, SynchronizationType.PRUEBA_LLEGADA, printerName, true);
+        //functionManager.addReceiverMailbox(1, printerName);
         this.setTitle(printerName);
         str = new String[3]; 
     }
+
+    public Model.Process getProcess() {
+        return process;
+    }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.

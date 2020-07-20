@@ -47,6 +47,7 @@ public class test{
             
             //CON MAILBOX
             
+            /*
             Process p1 = new Process(1, SynchronizationType.BLOCKING, QueueType.PRIORITY, 5, SynchronizationType.BLOCKING);
             Mailbox mailbox = new Mailbox(1, 5, QueueType.PRIORITY, true);
             Process p2 = new Process(2, SynchronizationType.BLOCKING, QueueType.PRIORITY, 5, SynchronizationType.BLOCKING);
@@ -68,7 +69,7 @@ public class test{
             p2.receiveMailbox(mailbox);
             sleep(3000);
             p2.receiveMailbox(mailbox);
-
+            */
         }
         
 }

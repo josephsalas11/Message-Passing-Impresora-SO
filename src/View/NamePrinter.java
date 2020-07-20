@@ -79,13 +79,22 @@ public class NamePrinter extends javax.swing.JFrame {
     private void printerNameBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printerNameBtnActionPerformed
        if (printerName.getText().equals(""))
                {
-                 JOptionPane.showMessageDialog(null, "ingrese un nombre válido para la impresora"
+                JOptionPane.showMessageDialog(null, "Ingrese un nombre válido para la impresora"
                     , "ERROR", JOptionPane.ERROR_MESSAGE);  
                }
        else
        {
-         MainPrinter mainPrinter = new MainPrinter(fm.getProcessList().size()+1, printerName.getText()); 
-         mainPrinter.setVisible(true);
+        MainPrinter mainPrinter = new MainPrinter(fm.getProcessList().size()+1, printerName.getText());
+         
+        //Si se creo el proceso, mostrar ventana
+        if(mainPrinter.getProcess() != null)
+            mainPrinter.setVisible(true); 
+        //Si no, eliminar MainPrinter y mostrar mensaje de error
+        else{
+            JOptionPane.showMessageDialog(null, "La impresora con el nombre "+printerName.getText()+" ya fue tomado"
+                    , "ERROR", JOptionPane.ERROR_MESSAGE);
+            mainPrinter.dispose();
+        }
        }
         
     }//GEN-LAST:event_printerNameBtnActionPerformed

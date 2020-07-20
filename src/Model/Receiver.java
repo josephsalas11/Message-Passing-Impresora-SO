@@ -102,6 +102,7 @@ public class Receiver extends Thread implements IReceiver{
         
             //MOVER EL ARCHIVO DE DIRECTORIO
             moveFile(messsageTmp);
+            currentMailbox = null; //VER SI ELIMINAR
         }
     }
     
@@ -110,7 +111,7 @@ public class Receiver extends Thread implements IReceiver{
             String[] fileName = message.getContent().split(Pattern.quote(separator));
             String name = fileName[fileName.length-1];
             try {
-                Path moveFile = Files.move(Paths.get(message.getContent()),
+                Files.copy(Paths.get(message.getContent()),
                         Paths.get(FunctionManager.getInstance().destinyPath.concat("\\"+name)), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException ex) {
                 Logger.getLogger(Receiver.class.getName()).log(Level.SEVERE, null, ex);

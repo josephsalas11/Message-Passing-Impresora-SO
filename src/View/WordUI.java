@@ -29,7 +29,7 @@ public class WordUI extends javax.swing.JFrame {
     public static String fileText;
     private String printFile;
     private FunctionManager fm = FunctionManager.getInstance();
-    private Model.Process ps;
+    private Model.Process process;
     public static int processCounter;
     public static String sourcePath;
      private File file;
@@ -40,9 +40,16 @@ public class WordUI extends javax.swing.JFrame {
     public WordUI(int processID, String editorName) {
         initComponents();
         this.setTitle(editorName);
-        //ps = fm.createImplicitProcess(processCounter, SynchronizationType.NONBLOCKING, QueueType.FIFO, 10, SynchronizationType.NONBLOCKING);
+        process = fm.createDynamicProcess(fm.getProcessList().size()+1, SynchronizationType.NONBLOCKING, QueueType.FIFO, 10, SynchronizationType.NONBLOCKING, editorName, false);
         //printButton.setVisible(false);
+        getPrintersCombobox();
     }
+
+    public Model.Process getProcess() {
+        return process;
+    }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -60,6 +67,7 @@ public class WordUI extends javax.swing.JFrame {
         printHelp = new javax.swing.JLabel();
         saveHelp = new javax.swing.JLabel();
         openBtn = new javax.swing.JButton();
+        cboxImpresoras = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Editor de Archivos");
@@ -113,6 +121,12 @@ public class WordUI extends javax.swing.JFrame {
             }
         });
 
+        cboxImpresoras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboxImpresorasActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -128,23 +142,27 @@ public class WordUI extends javax.swing.JFrame {
                         .addGap(90, 90, 90)
                         .addComponent(openBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
-                        .addComponent(printButton)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cboxImpresoras, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(printButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(printHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(37, Short.MAX_VALUE)
+                .addContainerGap(48, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(53, 53, 53)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(printButton)
                     .addComponent(saveBtn)
                     .addComponent(printHelp)
                     .addComponent(saveHelp)
                     .addComponent(openBtn))
-                .addGap(25, 25, 25))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cboxImpresoras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29))
         );
 
         pack();
@@ -159,7 +177,20 @@ public class WordUI extends javax.swing.JFrame {
         }
         else{
            try {
-                fm.sendIndirectProcess(ps.getId(), 1, MessageType.FIXED, 100, sourcePath, -1);
+               //buscar destination process
+               String printerName = cboxImpresoras.getSelectedItem().toString();
+               //si existe, mandar a imprimir
+               Model.Process printer = fm.getProcessPrinter(printerName);
+               if(printer != null){
+                   fm.sendIndirectProcess(process.getName(), printer.getMailbox().getId(), MessageType.FIXED, 100, sourcePath, -1, printerName); //se tiene que pasar a una nueva ventana
+               }
+               //cc mensaje de error
+               else{
+                   JOptionPane.showMessageDialog(null, "La impresora no existe en el sistema, revise su accesibilidad"
+                    , "Información - Imprimir archivo", JOptionPane.WARNING_MESSAGE);
+               }
+               
+                
             } catch (InterruptedException ex) {
                 Logger.getLogger(WordUI.class.getName()).log(Level.SEVERE, null, ex);
             } 
@@ -216,6 +247,10 @@ public class WordUI extends javax.swing.JFrame {
         
     }//GEN-LAST:event_openBtnActionPerformed
 
+    private void cboxImpresorasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboxImpresorasActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cboxImpresorasActionPerformed
+
     
     public void saveFile(String message, File file) throws IOException
     {
@@ -224,6 +259,15 @@ public class WordUI extends javax.swing.JFrame {
         write.write(message);
         write.close();
     }
+    
+    private void getPrintersCombobox(){
+        cboxImpresoras.removeAllItems();
+        ArrayList<String> printers = fm.getPrinterKeys();
+        for (int i = 0; i < printers.size(); i++) {
+            cboxImpresoras.addItem(printers.get(i));
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -250,9 +294,9 @@ public class WordUI extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(WordUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        fileText = args[0];
+        /*fileText = args[0];
         processCounter = Integer.parseInt(args[1]);
-        sourcePath = args[2];
+        sourcePath = args[2];*/
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             
@@ -263,6 +307,7 @@ public class WordUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> cboxImpresoras;
     private javax.swing.JTextArea fileArea;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton openBtn;

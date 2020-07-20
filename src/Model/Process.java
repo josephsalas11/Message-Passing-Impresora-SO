@@ -19,7 +19,7 @@ public class Process {
     private Producer producer;
     private IReceiver receiver;
 
-
+    private Mailbox mailbox;
 
 
     //para direccionamiento directo
@@ -79,11 +79,15 @@ public class Process {
             //System.out.println("No se pudo ingresar el mensaje porque la cola esta llena o el proceso no está autorizado en el mailbox");
             Log.getInstance().addLog(id, "No se pudo ingresar el mensaje porque la cola esta llena o el proceso no está autorizado en el mailbox", true);
         }
-        if(message.getDestinyID() == -1)
-            Log.getInstance().addLog(id, "Proceso: "+message.getSourceID()+" ha enviado la señal para enviar el mensaje '"+message.getContent()+"' a través del mailbox: "+mailbox.getId(), true);
-        else
-            Log.getInstance().addLog(id, "Proceso: "+message.getSourceID()+" ha enviado la señal para enviar el mensaje '"+message.getContent()+"' al proceso: "+message.getDestinyID()+ " a través del mailbox: "+mailbox.getId(), true);
-        //mailbox.putMessage();
+        else{
+            message.getDestiny().getReceiver().setCurrentMailbox(mailbox);
+            if(message.getDestinyID() == -1)
+                Log.getInstance().addLog(id, "Proceso: "+message.getSourceID()+" ha enviado la señal para enviar el mensaje '"+message.getContent()+"' a través del mailbox: "+mailbox.getId(), true);
+            else
+                Log.getInstance().addLog(id, "Proceso: "+message.getSourceID()+" ha enviado la señal para enviar el mensaje '"+message.getContent()+"' al proceso: "+message.getDestinyID()+ " a través del mailbox: "+mailbox.getId(), true);
+            //mailbox.putMessage();
+        }
+        
     }
     
     //implicito
@@ -170,4 +174,14 @@ public class Process {
     public boolean isPrinter() {
         return printer;
     }
+
+    public Mailbox getMailbox() {
+        return mailbox;
+    }
+
+    public void setMailbox(Mailbox mailbox) {
+        this.mailbox = mailbox;
+    }
+    
+    
 }

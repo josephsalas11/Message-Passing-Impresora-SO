@@ -47,20 +47,26 @@ public class FunctionManager {
             processList.put(name, new Process(processCounter, STP, queueType, queueSizeType,STR, name, printer));
     }
     
-    public void createStaticProcess(int processCounter,SynchronizationType STP,QueueType queueType, int queueSizeType, SynchronizationType STR, String name, boolean printer)
+    public Process createStaticProcess(int processCounter,SynchronizationType STP,QueueType queueType, int queueSizeType, SynchronizationType STR, String name, boolean printer)
     {
+        Process process = null;
         if(!isProcessNameTaken(name)){
             createMailbox(mailboxList.size()+1,queueSizeType,queueType, false);
-            processList.put(name, new Process(processCounter, STP,
-                    queueType, queueSizeType,STR, name, printer));
+            process = new Process(processCounter, STP, queueType, queueSizeType,STR, name, printer);
+            processList.put(name, process);
             addReceiverMailbox(mailboxList.size(),name);
         }
+        return process;
     }
     
-    public void createDynamicProcess(int processCounter,SynchronizationType STP,QueueType queueType, int queueSizeType, SynchronizationType STR, String name, boolean printer)
+    public Process createDynamicProcess(int processCounter,SynchronizationType STP,QueueType queueType, int queueSizeType, SynchronizationType STR, String name, boolean printer)
     {
-        if(!isProcessNameTaken(name))
-            processList.put(name, new Process(processCounter, STP, queueType, queueSizeType,STR, name, printer));
+        Process process = null;
+        if(!isProcessNameTaken(name)){
+            process = new Process(processCounter, STP, queueType, queueSizeType,STR, name, printer);
+            processList.put(name, process);
+        }
+        return process;
     }
     
     private boolean isProcessNameTaken(String name){
@@ -103,10 +109,10 @@ public class FunctionManager {
         }
     }
     
-    public boolean sendIndirectProcess(String sourceProcessName, int idDestinationProcess, MessageType messageType, int messageLength, String messageContent, int priority) throws InterruptedException
+    public boolean sendIndirectProcess(String sourceProcessName, int idDestinationProcess, MessageType messageType, int messageLength, String messageContent, int priority, String destinationProcessName) throws InterruptedException
     {        
         Process source = processList.get(sourceProcessName);
-        Process destination = null;
+        Process destination = processList.get(destinationProcessName);
         Mailbox mailbox = mailboxList.get(idDestinationProcess);
         
         //validacion para determinar que el producer, el receiver y el mailbox existan en el controlador
@@ -159,6 +165,10 @@ public class FunctionManager {
         Mailbox mailbox = mailboxList.get(mailboxId);
         Process receiver = processList.get(receiverName);
         mailbox.addReceiver(receiver);
+        
+        //funcion auxiliar para que funcione impresora
+        receiver.setMailbox(mailbox);
+        
     }
     
     public void addProducerMailbox(int mailboxId, String producerName)
@@ -189,5 +199,14 @@ public class FunctionManager {
         if(process != null && process.isPrinter())
             return process;
         return null;
+    }
+    
+    public ArrayList<String> getPrinterKeys(){
+        ArrayList<String> printers = new ArrayList<>();
+        for(String i:processList.keySet()){
+            if(processList.get(i).isPrinter())
+                printers.add(i);
+        }
+        return printers;
     }
 }

@@ -86,8 +86,19 @@ public class NameEditor extends javax.swing.JFrame {
                }
        else
        {
-         WordUI wordUI = new WordUI(fm.getProcessList().size()+1, editorName.getText()); 
-         wordUI.setVisible(true);
+           WordUI wordUI = new WordUI(fm.getProcessList().size()+1, editorName.getText()); 
+           
+           //Si se creo el proceso, mostrar ventana
+            if(wordUI.getProcess() != null){
+                wordUI.setVisible(true);
+                this.dispose();
+            }
+            //Si no, eliminar WordUI y mostrar mensaje de error
+            else{
+                JOptionPane.showMessageDialog(null, "El editor con el nombre "+editorName.getText()+" ya fue tomado"
+                        , "ERROR", JOptionPane.ERROR_MESSAGE);
+                wordUI.dispose();
+            }         
        }
     }//GEN-LAST:event_editorNameBtnActionPerformed
 
