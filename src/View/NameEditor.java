@@ -86,12 +86,13 @@ public class NameEditor extends javax.swing.JFrame {
                }
        else
        {
-           WordUI wordUI = new WordUI(fm.getProcessList().size()+1, editorName.getText()); 
+           WordUI wordUI = new WordUI(fm.getProcessCounter(), editorName.getText()); 
            
            //Si se creo el proceso, mostrar ventana
             if(wordUI.getProcess() != null){
                 wordUI.setVisible(true);
                 this.dispose();
+                fm.setProcessCounter(fm.getProcessCounter()+1);
             }
             //Si no, eliminar WordUI y mostrar mensaje de error
             else{

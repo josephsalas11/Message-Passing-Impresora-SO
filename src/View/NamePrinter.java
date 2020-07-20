@@ -84,11 +84,14 @@ public class NamePrinter extends javax.swing.JFrame {
                }
        else
        {
-        MainPrinter mainPrinter = new MainPrinter(fm.getProcessList().size()+1, printerName.getText());
+        MainPrinter mainPrinter = new MainPrinter(fm.getProcessCounter(), printerName.getText());
          
         //Si se creo el proceso, mostrar ventana
-        if(mainPrinter.getProcess() != null)
+        if(mainPrinter.getProcess() != null){
             mainPrinter.setVisible(true); 
+            this.dispose();
+            fm.setProcessCounter(fm.getProcessCounter()+1);
+        }
         //Si no, eliminar MainPrinter y mostrar mensaje de error
         else{
             JOptionPane.showMessageDialog(null, "La impresora con el nombre "+printerName.getText()+" ya fue tomado"

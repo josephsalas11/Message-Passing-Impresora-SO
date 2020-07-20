@@ -11,12 +11,15 @@ import Model.Log;
 import Model.LogMessage;
 import Model.QueueType;
 import Model.SynchronizationType;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
@@ -44,6 +47,16 @@ public class MainPrinter extends javax.swing.JFrame {
         //functionManager.addReceiverMailbox(1, printerName);
         this.setTitle(printerName);
         str = new String[3]; 
+        
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent event){
+                Model.Process p = functionManager.disposeProcess(process.getName());
+                functionManager.disposeMailbox(p.getMailbox().getId());
+                dispose();
+            }
+        });
     }
 
     public Model.Process getProcess() {

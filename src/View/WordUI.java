@@ -9,6 +9,8 @@ import Controller.BashFile;
 import Controller.FunctionManager;
 import static View.WordUI.fileText;
 import Model.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
@@ -43,6 +46,15 @@ public class WordUI extends javax.swing.JFrame {
         process = fm.createDynamicProcess(fm.getProcessList().size()+1, SynchronizationType.NONBLOCKING, QueueType.FIFO, 10, SynchronizationType.NONBLOCKING, editorName, false);
         //printButton.setVisible(false);
         getPrintersCombobox();
+        
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent event){
+                fm.disposeProcess(process.getName());
+                dispose();
+            }
+        });
     }
 
     public Model.Process getProcess() {
@@ -121,6 +133,11 @@ public class WordUI extends javax.swing.JFrame {
             }
         });
 
+        cboxImpresoras.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cboxImpresorasMouseClicked(evt);
+            }
+        });
         cboxImpresoras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboxImpresorasActionPerformed(evt);
@@ -215,7 +232,8 @@ public class WordUI extends javax.swing.JFrame {
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
     
-        JFileChooser save = new JFileChooser();
+        File f = new File("Documentos");
+        JFileChooser save = new JFileChooser(f.getAbsolutePath());
         save.showSaveDialog(null);
         save.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         File file = save.getSelectedFile();
@@ -234,7 +252,8 @@ public class WordUI extends javax.swing.JFrame {
     private void openBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openBtnActionPerformed
         String fileText = "";
         BashFile bashFile = new BashFile();
-        JFileChooser openFile = new JFileChooser();
+        File f = new File("Documentos");
+        JFileChooser openFile = new JFileChooser(f.getAbsolutePath());
         openFile.showOpenDialog(null);
         openFile.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES); 
         file = openFile.getSelectedFile();
@@ -248,14 +267,18 @@ public class WordUI extends javax.swing.JFrame {
     }//GEN-LAST:event_openBtnActionPerformed
 
     private void cboxImpresorasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboxImpresorasActionPerformed
-        // TODO add your handling code here:
+        //getPrintersCombobox();
     }//GEN-LAST:event_cboxImpresorasActionPerformed
+
+    private void cboxImpresorasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cboxImpresorasMouseClicked
+        getPrintersCombobox();
+    }//GEN-LAST:event_cboxImpresorasMouseClicked
 
     
     public void saveFile(String message, File file) throws IOException
     {
         FileWriter write;
-       write = new FileWriter(file, true);
+        write = new FileWriter(file, true);
         write.write(message);
         write.close();
     }
@@ -265,6 +288,7 @@ public class WordUI extends javax.swing.JFrame {
         ArrayList<String> printers = fm.getPrinterKeys();
         for (int i = 0; i < printers.size(); i++) {
             cboxImpresoras.addItem(printers.get(i));
+            System.out.println(printers.get(i));
         }
     }
     

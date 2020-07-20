@@ -17,11 +17,14 @@ import java.io.File;
 
 public class FunctionManager {
 
-    Hashtable<String, Process> processList;
-    Hashtable<Integer, Mailbox> mailboxList;
-    static FunctionManager singleton = null;
+    private Hashtable<String, Process> processList;
+    private Hashtable<Integer, Mailbox> mailboxList;
+    private static FunctionManager singleton = null;
 
-    public String destinyPath ;
+    public String destinyPath;
+    
+    private int processCounter = 1;
+    private int mailboxCounter = 1;
     
     private FunctionManager() {
         processList = new Hashtable<String, Process>();
@@ -51,7 +54,8 @@ public class FunctionManager {
     {
         Process process = null;
         if(!isProcessNameTaken(name)){
-            createMailbox(mailboxList.size()+1,queueSizeType,queueType, false);
+            createMailbox(mailboxCounter,queueSizeType,queueType, false);
+            mailboxCounter++;
             process = new Process(processCounter, STP, queueType, queueSizeType,STR, name, printer);
             processList.put(name, process);
             addReceiverMailbox(mailboxList.size(),name);
@@ -209,4 +213,35 @@ public class FunctionManager {
         }
         return printers;
     }
+    
+    public Process disposeProcess(String processName){
+        Process process = processList.remove(processName);
+        process.stopProcess();
+        System.out.println("Se ha eliminado el proceso");
+        return process;
+    }
+    
+    public Mailbox disposeMailbox(int mailboxId){
+        System.out.println("Se ha eliminado el mailbox");
+        return mailboxList.remove(mailboxId);
+    }
+
+    public int getProcessCounter() {
+        return processCounter;
+    }
+
+    public int getMailboxCounter() {
+        return mailboxCounter;
+    }
+
+    public void setProcessCounter(int processCounter) {
+        this.processCounter = processCounter;
+    }
+
+    public void setMailboxCounter(int mailboxCounter) {
+        this.mailboxCounter = mailboxCounter;
+    }
+    
+    
+    
 }
