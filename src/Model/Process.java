@@ -32,9 +32,9 @@ public class Process {
         this.printer = printer;
         
         //LOG
-        String detail = "ID del proceso : "+id + " ~~ "+"Tipo de proceso : "+synchronizationTypeProducer.toString()+"-"+synchronizationTypeReceiver.toString()
-                + " ~~ " +" ha sido creado exitosamente";
-        Log.getInstance().addLog(id, detail, true);
+        //String detail = "ID del proceso : "+id + " ~~ "+"Tipo de proceso : "+synchronizationTypeProducer.toString()+"-"+synchronizationTypeReceiver.toString()
+        //        + " ~~ " +" ha sido creado exitosamente";
+        //Log.getInstance().addLog(id, detail, true);
 
         producer.start();
         receiver.start();

@@ -30,11 +30,11 @@ public class Log {
         return singleton;
     }
     
-    public void addLog(int associatedId, String detail, boolean isProcess){ 
+    public void addLog(int associatedID, String detail, boolean isProcess){ 
         
         LocalDateTime now = LocalDateTime.now();  
         String finalDetail = dtf.format(now)+": "+detail;
-        LogMessage logMessage = new LogMessage(associatedId, finalDetail, now, isProcess);
+        LogMessage logMessage = new LogMessage(associatedID, finalDetail, now, isProcess);
         logs.add(logMessage);
         System.out.println(detail);
     }
@@ -43,10 +43,10 @@ public class Log {
         return logs;
     }
     
-    public ArrayList getProcessLog(int idProcess){
+    public ArrayList getProcessLog(int processID){
         ArrayList result = new ArrayList<>();
         for(int i=0; i<logs.size(); i++){
-            if(logs.get(i).getAssociatedId() == idProcess){
+            if(logs.get(i).getAssociatedID() == processID){
                 result.add(logs.get(i));
                 System.out.println(logs.get(i).getDetail());
             }

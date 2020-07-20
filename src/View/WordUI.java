@@ -260,6 +260,7 @@ public class WordUI extends javax.swing.JFrame {
         sourcePath = file.getAbsolutePath();
         try {
             fileText = bashFile.getFileText(file);
+            fileArea.setText(fileText);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainPrinter.class.getName()).log(Level.SEVERE, null, ex);
         }

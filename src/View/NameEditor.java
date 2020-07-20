@@ -7,6 +7,7 @@
 package View;
 
 import Controller.FunctionManager;
+import Model.Log;
 import javax.swing.JOptionPane;
 
 /**
@@ -92,6 +93,8 @@ public class NameEditor extends javax.swing.JFrame {
             if(wordUI.getProcess() != null){
                 wordUI.setVisible(true);
                 this.dispose();
+                String detail  ="El editor "+ editorName.getText()+" ha sido creado exitosamente";
+                Log.getInstance().addLog(fm.getProcessCounter(), detail, true);
                 fm.setProcessCounter(fm.getProcessCounter()+1);
             }
             //Si no, eliminar WordUI y mostrar mensaje de error

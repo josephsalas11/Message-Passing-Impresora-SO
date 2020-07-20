@@ -109,14 +109,14 @@ public class Mailbox implements IProducer{
         producers.add(producer.getProducer());
 
         //LOG
-        Log.getInstance().addLog(id, "El proceso "+producer.getId()+" ha sido agregado a la lista del mailbox "+id, false);
+        //Log.getInstance().addLog(id, "El proceso "+producer.getId()+" ha sido agregado a la lista del mailbox "+id, false);
     }
     
     public void addReceiver(Process receiver){
         receivers.add(receiver.getReceiver());
         
         //LOG
-        Log.getInstance().addLog(id, "El proceso "+receiver.getId()+" ha sido agregado a la lista del mailbox "+id, false);
+        Log.getInstance().addLog(id, "La impresora "+receiver.getName()+" ha sido agregado a la lista del mailbox "+id, false);
     }
     
     @Override
@@ -127,9 +127,9 @@ public class Mailbox implements IProducer{
                 return false;
             }
             if(message.getDestinyID() == -1)
-                Log.getInstance().addLog(id, "El mailbox "+id+" ha recibido el mensaje '"+message.getContent()+" del proceso "+message.getSourceID(), false);
+                Log.getInstance().addLog(id, "El mailbox "+id+" ha recibido el mensaje ubicado en '"+message.getContent()+" del proceso "+message.getSource().getName(), false);
             else
-                Log.getInstance().addLog(id, "El mailbox "+id+" ha recibido el mensaje '"+message.getContent()+"' del proceso "+message.getSourceID()+" para el proceso "+message.getDestinyID(), false);
+                Log.getInstance().addLog(id, "El mailbox "+id+" ha recibido el mensaje '"+message.getContent()+"' del proceso "+message.getSource().getName()+" para el proceso "+message.getDestiny().getName(), false);
 
             return true;
         }

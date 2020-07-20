@@ -6,6 +6,7 @@
 package View;
 
 import Controller.FunctionManager;
+import Model.Log;
 import javax.swing.JOptionPane;
 
 /**
@@ -90,6 +91,8 @@ public class NamePrinter extends javax.swing.JFrame {
         if(mainPrinter.getProcess() != null){
             mainPrinter.setVisible(true); 
             this.dispose();
+            String detail  ="La impresora : "+ printerName.getText()+" ha sido creada exitosamente";
+            Log.getInstance().addLog(fm.getProcessCounter(), detail, true);
             fm.setProcessCounter(fm.getProcessCounter()+1);
         }
         //Si no, eliminar MainPrinter y mostrar mensaje de error

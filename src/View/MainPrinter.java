@@ -149,11 +149,7 @@ public class MainPrinter extends javax.swing.JFrame {
     }//GEN-LAST:event_logHelpMouseClicked
 
     private void logBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logBtnActionPerformed
-         String messageLog = "";
-        ArrayList<LogMessage> logs = Log.getInstance().getLogs();
-        for (int i = 0; i < logs.size(); i++) {
-            messageLog +=logs.get(i).getDetail()+"\n";
-        }
+         String messageLog = getProcessLogs(process.getId(), -1);  
         logArea.setText(messageLog);
     }//GEN-LAST:event_logBtnActionPerformed
 
@@ -161,6 +157,26 @@ public class MainPrinter extends javax.swing.JFrame {
         return logArea;
     }
 
+    public String getProcessLogs(int sourceId, int logsQuantity){
+        ArrayList<String> logMessages = Log.getInstance().getProcessLog(sourceId) ;
+        String logs = "";
+        System.out.println(sourceId);
+        if(logsQuantity == -1){
+            for (int y = 0; y < logMessages.size(); y++) 
+            {
+                logs += Log.getInstance().getLogs().get(y).getDetail() + "\n";
+            }
+        }
+        else{
+            int index = logMessages.size()-1;
+            while(logsQuantity > 0 && index >=0){
+                logs += Log.getInstance().getLogs().get(index).getDetail() + "\n";
+                index--;
+                logsQuantity--;
+            }
+            }
+            return logs;
+        }
     
     /**
      * @param args the command line arguments

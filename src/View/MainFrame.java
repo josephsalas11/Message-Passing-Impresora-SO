@@ -6,6 +6,7 @@
 package View;
 
 import Controller.FunctionManager;
+import Model.Log;
 import java.util.ArrayList;
 
 /**
@@ -27,6 +28,7 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
+        logArea.setEditable(false);
     }
 
     /**
@@ -40,6 +42,9 @@ public class MainFrame extends javax.swing.JFrame {
 
         printerBtn = new javax.swing.JButton();
         editorBtn = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        logArea = new javax.swing.JTextArea();
+        updateLogBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -57,25 +62,50 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        logArea.setColumns(20);
+        logArea.setRows(5);
+        jScrollPane1.setViewportView(logArea);
+
+        updateLogBtn.setText("Actualizar Log");
+        updateLogBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateLogBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(155, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(printerBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(editorBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(147, 147, 147))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(29, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(printerBtn)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(editorBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(updateLogBtn))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(36, 36, 36))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(55, 55, 55)
+                .addGap(20, 20, 20)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(editorBtn)
+                    .addComponent(updateLogBtn))
+                .addGap(18, 18, 18)
                 .addComponent(printerBtn)
-                .addGap(40, 40, 40)
-                .addComponent(editorBtn)
-                .addContainerGap(51, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         pack();
@@ -88,6 +118,9 @@ public class MainFrame extends javax.swing.JFrame {
        //printer = new MainPrinter();
        //printer.setVisible(true);
        //printers.add(printer);
+     
+      
+       
        
     }//GEN-LAST:event_printerBtnActionPerformed
 
@@ -96,6 +129,11 @@ public class MainFrame extends javax.swing.JFrame {
         nameEditor.setVisible(true);
         //editors.add(nameEditor);
     }//GEN-LAST:event_editorBtnActionPerformed
+
+    private void updateLogBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateLogBtnActionPerformed
+         String logs = getLogs();
+         logArea.setText(logs);
+    }//GEN-LAST:event_updateLogBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -131,9 +169,48 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
     }
+    
+     public String getLogs(){
+            String logs = "";
+            for (int y = 0; y < Log.getInstance().getLogs().size(); y++) 
+            {
+                
+                logs += Log.getInstance().getLogs().get(y).getDetail() + "\n";
+                
+            }
+            return logs;
+        }
+        
+        public String getProcessLogs(int sourceId, int logsQuantity){
+            ArrayList<String> logMessages = Log.getInstance().getProcessLog(sourceId) ;
+            String logs = "";
+            if(logsQuantity == -1){
+                for (int y = 0; y < logMessages.size(); y++) 
+                {
+                    logs += Log.getInstance().getLogs().get(y).getDetail() + "\n";
+                }
+            }
+            else{
+                int index = logMessages.size()-1;
+                while(logsQuantity > 0 && index >=0){
+                    logs += Log.getInstance().getLogs().get(index).getDetail() + "\n";
+                    index--;
+                    logsQuantity--;
+                }/*
+                for (int y = 0; y < logsQuantity; y++) 
+                {
+                    logs += Log.getInstance().getLogs().get(y).getDetail() + "\n";
+                    index--;
+                }*/
+            }
+            return logs;
+        }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton editorBtn;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea logArea;
     private javax.swing.JButton printerBtn;
+    private javax.swing.JButton updateLogBtn;
     // End of variables declaration//GEN-END:variables
 }

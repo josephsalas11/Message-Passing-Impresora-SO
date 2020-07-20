@@ -13,20 +13,20 @@ import java.util.Date;
  * @author Paulo
  */
 public class LogMessage {
-    private int associatedId; //process o mailbox id
+    private int associatedID; //process o mailbox id
     private String detail;
     private LocalDateTime timestamp;
     private boolean isProcess; //si es false es mailbox
 
-    public LogMessage(int associatedId, String detail, LocalDateTime timestamp, boolean isProcess) {
-        this.associatedId = associatedId;
+    public LogMessage(int associatedID, String detail, LocalDateTime timestamp, boolean isProcess) {
+        this.associatedID = associatedID;
         this.detail = detail;
         this.timestamp = timestamp;
         this.isProcess = isProcess;
     }
 
-    public int getAssociatedId() {
-        return associatedId;
+    public int getAssociatedID() {
+        return associatedID;
     }
 
     public String getDetail() {
