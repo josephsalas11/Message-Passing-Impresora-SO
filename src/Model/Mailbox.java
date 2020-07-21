@@ -61,7 +61,7 @@ public class Mailbox implements IProducer{
                 
                 if(receiver != null && receiver.getSynchronizationType() == SynchronizationType.BLOCKING){
                     receiver.receiveMessage(); //CAMBIAR
-                    System.out.println("asd");
+                    //System.out.println("asd");
                 }
             }
         }
@@ -153,7 +153,7 @@ public class Mailbox implements IProducer{
         if(dynamic){
             for(int i=0; i<producers.size(); i++){
                 if(producers.get(i).equals(producer)){
-                    System.out.println("true");
+                    //System.out.println("true");
                     return true;
                 }
             }

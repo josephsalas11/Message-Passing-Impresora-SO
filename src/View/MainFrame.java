@@ -7,6 +7,7 @@ package View;
 
 import Controller.FunctionManager;
 import Model.Log;
+import Model.LogMessage;
 import java.util.ArrayList;
 
 /**
@@ -77,35 +78,30 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(29, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(36, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(printerBtn)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(editorBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(updateLogBtn))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(36, 36, 36))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(printerBtn)
+                            .addComponent(editorBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(528, 528, 528)
+                        .addComponent(updateLogBtn))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 742, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(36, 36, 36))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(editorBtn)
                     .addComponent(updateLogBtn))
                 .addGap(18, 18, 18)
                 .addComponent(printerBtn)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addGap(26, 26, 26))
         );
 
         pack();
@@ -182,18 +178,18 @@ public class MainFrame extends javax.swing.JFrame {
         }
         
         public String getProcessLogs(int sourceId, int logsQuantity){
-            ArrayList<String> logMessages = Log.getInstance().getProcessLog(sourceId) ;
+            ArrayList<LogMessage> logMessages = Log.getInstance().getProcessLog(sourceId) ;
             String logs = "";
             if(logsQuantity == -1){
                 for (int y = 0; y < logMessages.size(); y++) 
                 {
-                    logs += Log.getInstance().getLogs().get(y).getDetail() + "\n";
+                    logs += logMessages.get(y).getDetail() + "\n";
                 }
             }
             else{
                 int index = logMessages.size()-1;
                 while(logsQuantity > 0 && index >=0){
-                    logs += Log.getInstance().getLogs().get(index).getDetail() + "\n";
+                    logs += logMessages.get(index).getDetail() + "\n";
                     index--;
                     logsQuantity--;
                 }/*

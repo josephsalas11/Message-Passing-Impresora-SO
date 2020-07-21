@@ -43,10 +43,10 @@ public class Log {
         return logs;
     }
     
-    public ArrayList getProcessLog(int processID){
+    public ArrayList<LogMessage> getProcessLog(int processID){
         ArrayList result = new ArrayList<>();
         for(int i=0; i<logs.size(); i++){
-            if(logs.get(i).getAssociatedID() == processID){
+            if(logs.get(i).getAssociatedID() == processID && logs.get(i).isIsProcess()){
                 result.add(logs.get(i));
                 System.out.println(logs.get(i).getDetail());
             }

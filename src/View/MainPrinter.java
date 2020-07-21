@@ -79,6 +79,7 @@ public class MainPrinter extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         logHelp = new javax.swing.JLabel();
         logBtn = new javax.swing.JButton();
+        btnColaImpresion = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Impresora");
@@ -106,12 +107,24 @@ public class MainPrinter extends javax.swing.JFrame {
             }
         });
 
+        btnColaImpresion.setText("Cola de impresión");
+        btnColaImpresion.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnColaImpresionMouseClicked(evt);
+            }
+        });
+        btnColaImpresion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnColaImpresionActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(46, 46, 46)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -122,7 +135,9 @@ public class MainPrinter extends javax.swing.JFrame {
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(198, 198, 198)
-                        .addComponent(logBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(logBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnColaImpresion)))
                 .addContainerGap(53, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -135,7 +150,9 @@ public class MainPrinter extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(logBtn)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(logBtn)
+                    .addComponent(btnColaImpresion))
                 .addGap(44, 44, 44))
         );
 
@@ -153,24 +170,36 @@ public class MainPrinter extends javax.swing.JFrame {
         logArea.setText(messageLog);
     }//GEN-LAST:event_logBtnActionPerformed
 
+    private void btnColaImpresionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnColaImpresionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnColaImpresionActionPerformed
+
+    private void btnColaImpresionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnColaImpresionMouseClicked
+        String mailboxDisplay = process.getMailbox().toString()+"\n";
+        String mailboxQueue = process.getMailbox().getQueueLog();
+            
+        JOptionPane.showMessageDialog(null, mailboxDisplay + mailboxQueue
+                    , "Log de la cola del la impresora " + process.getName(), JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_btnColaImpresionMouseClicked
+
     public JTextArea getLogArea() {
         return logArea;
     }
 
     public String getProcessLogs(int sourceId, int logsQuantity){
-        ArrayList<String> logMessages = Log.getInstance().getProcessLog(sourceId) ;
+        ArrayList<LogMessage> logMessages = Log.getInstance().getProcessLog(sourceId) ;
         String logs = "";
         System.out.println(sourceId);
         if(logsQuantity == -1){
             for (int y = 0; y < logMessages.size(); y++) 
             {
-                logs += Log.getInstance().getLogs().get(y).getDetail() + "\n";
+                logs += logMessages.get(y).getDetail() + "\n";
             }
         }
         else{
             int index = logMessages.size()-1;
             while(logsQuantity > 0 && index >=0){
-                logs += Log.getInstance().getLogs().get(index).getDetail() + "\n";
+                logs += logMessages.get(index).getDetail() + "\n";
                 index--;
                 logsQuantity--;
             }
@@ -219,6 +248,7 @@ public class MainPrinter extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnColaImpresion;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea logArea;

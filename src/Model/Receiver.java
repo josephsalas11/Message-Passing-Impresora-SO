@@ -66,7 +66,6 @@ public class Receiver extends Thread implements IReceiver{
                     else{
                         if(currentMailbox != null){
                             retreiveMessageMailbox();
-                            System.out.println("entro");
                         }
                         else
                             retreiveMessage(); 

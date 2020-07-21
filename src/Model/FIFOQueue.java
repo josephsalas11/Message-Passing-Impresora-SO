@@ -138,7 +138,7 @@ public class FIFOQueue implements IMessageQueue{
             result = dtf.format(now)+" "+action+" mensaje: "+message.getContent();
         else
             result = action;
-        
+        System.out.println(result);
         return result;
     }
 
@@ -149,6 +149,7 @@ public class FIFOQueue implements IMessageQueue{
         
         String result = dtf.format(now)+"\nTamaño: "+queue.size()+"\nTipo: FIFO\nLog:\n";
         for (int i = 0; i < log.size(); i++) {
+            System.out.println(log.get(i));
             result = result.concat(log.get(i)+"\n");
         }
         return result;
